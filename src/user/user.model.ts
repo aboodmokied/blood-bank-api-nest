@@ -1,24 +1,25 @@
 import { Table, Column, Model, DataType } from 'sequelize-typescript';
+import { CustomModel } from 'src/custom-model/custom-model';
 
 @Table
-export class User extends Model {
+export class User extends Model{
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  name: string;
+  declare name: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
     unique: true,
   })
-  email: string;
+  declare email: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
     unique: true,
   })
-  password: string;
+  declare password: string;
 }

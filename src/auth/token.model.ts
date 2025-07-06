@@ -8,20 +8,20 @@ export class Token extends Model {
     allowNull: false,
     unique:true
   })
-  signature: string;
+  declare signature: string;
 
   @Column({
     type: DataType.BOOLEAN,
     defaultValue:false
   })
-  revoked: boolean;
+  declare revoked: boolean;
 
   @ForeignKey(()=>User)
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  userId: boolean;
+  declare userId: boolean;
 
 
 //   relations

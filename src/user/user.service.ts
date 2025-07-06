@@ -15,6 +15,7 @@ export class UserService {
     async validateUser(validateUserDto: ValidateUserDto) {
         const { email, password } = validateUserDto;
         const user = await this.userModel.findOne({ where: { email } })
+        console.log({user});
         if (user && bcrypt.compareSync(password, user.password)) {
             return user;
         }

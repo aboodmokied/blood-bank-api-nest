@@ -18,7 +18,7 @@ import { User } from 'src/user/user.model';
                 database: configService.get<string>('DB_NAME'),
                 models: [User],
                 autoLoadModels: true,
-                synchronize : false,
+                synchronize : true,
                 sync: { alter: false },
             })
         })

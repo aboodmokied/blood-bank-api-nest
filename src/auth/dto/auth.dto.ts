@@ -11,8 +11,6 @@ export class SingUpDto {
     email: string;
 
     @IsString({ message: 'Password must be a string' })
-    @MinLength(3, { message: 'password must be at least 3 characters' })
-    @MaxLength(20, { message: 'password must be at most 20 characters' })
     password: string;
 
     // @IsString()
@@ -27,8 +25,6 @@ export class SingInDto {
     email: string;
 
     @IsString({ message: 'Password must be a string' })
-    @MinLength(3, { message: 'password must be at least 3 characters' })
-    @MaxLength(20, { message: 'password must be at most 20 characters' })
     password: string;
     
 }
