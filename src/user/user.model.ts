@@ -1,8 +1,10 @@
-import { Table, Column, Model, DataType } from 'sequelize-typescript';
+import { Table, Column, DataType } from 'sequelize-typescript';
 import { CustomModel } from 'src/custom-model/custom-model';
+import { Role } from 'src/types/auth.types';
+
 
 @Table
-export class User extends Model{
+export class User extends CustomModel{
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -22,4 +24,7 @@ export class User extends Model{
     unique: true,
   })
   declare password: string;
+
+  @Column({ defaultValue: 'user' })
+  declare role: Role;
 }
