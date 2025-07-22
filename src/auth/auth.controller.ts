@@ -12,7 +12,7 @@ export class AuthController {
 
     @UseGuards(LocalAuthGuard)
     @Post('login')
-    login(@Req() req:Request , @Body() singInDto : SingInDto){
+    login(@Req() req:Request){
         return this.authService.generateJwtToken(req.user as User);    
     }
 
