@@ -5,4 +5,4 @@ export type AuthPayload={
     jti: any,
 }
 
-export type Role = 'admin' | 'user';
+export type Role = 'admin' | 'donor' | 'hospital' | 'doctor';

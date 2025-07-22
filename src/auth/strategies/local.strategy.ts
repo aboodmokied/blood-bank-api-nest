@@ -7,11 +7,11 @@ import { SingUpDto } from "../dto/auth.dto";
 export class LocalStrategy extends PassportStrategy(Strategy,'local'){
     constructor(private readonly userService:UserService){
         super({
-            usernameField:'email'
+            usernameField:'email',
         })
     }
     async validate(email: string, password: string) {
-        const user = await this.userService.validateUser({ email, password });
+        const user = await this.userService.validateUser({ email, password,role:'donor' });
         if(!user){
             throw new BadRequestException(['البيانات المدخلة غير صحيحة']);
         }

@@ -19,7 +19,7 @@ import { User } from 'src/user/user.model';
                 models: [User],
                 autoLoadModels: true,
                 synchronize : true,
-                sync: { alter: false },
+                sync: { alter: true },
             })
         })
     ]

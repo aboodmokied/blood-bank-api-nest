@@ -1,5 +1,6 @@
-import { IsString, MinLength, IsEmail, MaxLength, IsNotEmpty } from "class-validator";
+import { IsString, MinLength, IsEmail, MaxLength, IsNotEmpty, IsEnum } from "class-validator";
 import { NotEmpty } from "sequelize-typescript";
+import { Role } from "src/types/auth.types";
 
 export class RegisterUserDto {
     @IsString()
@@ -14,6 +15,10 @@ export class RegisterUserDto {
     @IsNotEmpty({message : "The Password required"})
     @MinLength(6, { message: 'Password is too short. Minimum length is 6 characters' })
     password : string;
+  
+    @IsNotEmpty({message : "User Role required"})
+    @IsString()
+    role:Role
 }
 
 export class ValidateUserDto {
@@ -22,4 +27,6 @@ export class ValidateUserDto {
 
   @IsString()
   password: string;
+
+  role:Role
 }
