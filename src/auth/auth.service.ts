@@ -45,8 +45,8 @@ export class AuthService {
             signature,
             userId:user.id
         })
-        const {id,name,email}=user;
-        return {token:accessToken,user:{id,name,email}};
+        const {id,name,email,role}=user;
+        return {token:accessToken,user:{id,name,email,role}};
     }
 
     async logout(token:string){
