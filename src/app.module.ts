@@ -6,12 +6,23 @@ import { UserModule } from './user/user.module';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { RolesModule } from './roles/roles.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // Makes ConfigService available app-wide
+    }),
+    MailerModule.forRoot({
+      transport:{
+        service : process.env.EMAIL_SERVICE,
+        secure: true, // true for 465, false for other ports
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      }
     }),
     // SequelizeModule.forRootAsync({
     //   imports: [ConfigModule],

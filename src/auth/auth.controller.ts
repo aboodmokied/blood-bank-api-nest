@@ -4,7 +4,7 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { Request, Response } from 'express';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { User } from 'src/user/user.model';
-import { SingInDto } from './dto/auth.dto';
+import { ChangePasswordDto, ResetPasswordDto, SingInDto } from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -30,4 +30,20 @@ export class AuthController {
     me(@Req() req:Request){
         return {user:req.user}
     }
+
+    // @UseGuards(JwtAuthGuard)
+    @Post('reset-password')
+    async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+        return this.authService.resetPassword(resetPasswordDto);
+    }
+
+    @Post('verify-code') 
+    async verifyCode(@Body('email') email: string, @Body('code') code: string) {
+        return this.authService.verifyResetCode(email, code);
+    }
+
+    @Post('change-password')
+  async changePassword(@Body() changePasswordDto: ChangePasswordDto) {
+    return this.authService.changePassword(changePasswordDto);
+  }
 }

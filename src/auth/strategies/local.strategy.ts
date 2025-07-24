@@ -11,7 +11,7 @@ export class LocalStrategy extends PassportStrategy(Strategy,'local'){
         })
     }
     async validate(email: string, password: string) {
-        const user = await this.userService.validateUser({ email, password,role:'donor' });
+        const user = await this.userService.validateUser({ email, password,role:'admin' });
         if(!user){
             throw new BadRequestException(['البيانات المدخلة غير صحيحة']);
         }

@@ -29,25 +29,25 @@ export class SingInDto {
     
 }
 
-// export class ResetPasswordDto {
-//     @IsString()
-//     @IsEmail({}, { message: "Email is not valid" })
-//     email: string;
-// }
+export class ResetPasswordDto {
+    @IsString()
+    @IsEmail({}, { message: "Email is not valid" })
+    email: string;
+}
 
-// export class ChangePasswordDto {
+export class ChangePasswordDto {
 
-//     @IsString()
-//     @MinLength(3, { message: "password must be at least 3 characters" })
-//     @MaxLength(20, { message: "password must be at most 20 characters" })
-//     oldPassword: string;
+    @IsString()
+    @MinLength(3, { message: "password must be at least 3 characters" })
+    @MaxLength(20, { message: "password must be at most 20 characters" })
+    oldPassword: string;
 
-//     @IsString()
-//     @MinLength(3, { message: "password must be at least 3 characters" })
-//     @MaxLength(20, { message: "password must be at most 20 characters" })
-//     newPassword: string;
+    @IsString()
+    @MinLength(3, { message: "password must be at least 3 characters" })
+    @MaxLength(20, { message: "password must be at most 20 characters" })
+    newPassword: string;
 
-//     @IsString()
-//     @IsEmail({}, { message: "Email is not valid" })
-//     email: string;
-// }
+    @IsString()
+    @IsEmail({}, { message: "Email is not valid" })
+    email: string;
+}
