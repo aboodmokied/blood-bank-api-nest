@@ -1,4 +1,5 @@
-import { IsString, MaxLength, MinLength, IsEmail } from "class-validator";
+import { IsString, MaxLength, MinLength, IsEmail, IsNotEmpty } from "class-validator";
+import { Role } from "src/types/auth.types";
 
 export class SingUpDto {
     // @IsString()
@@ -33,6 +34,10 @@ export class ResetPasswordDto {
     @IsString()
     @IsEmail({}, { message: "Email is not valid" })
     email: string;
+
+    @IsNotEmpty({message : "User Role required"})
+    @IsString()
+    role:Role
 }
 
 export class ChangePasswordDto {
@@ -50,4 +55,8 @@ export class ChangePasswordDto {
     @IsString()
     @IsEmail({}, { message: "Email is not valid" })
     email: string;
+
+    @IsNotEmpty({message : "User Role required"})
+    @IsString()
+    role:Role
 }

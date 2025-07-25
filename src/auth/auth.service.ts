@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import * as bcrypt from 'bcryptjs';
@@ -15,12 +15,12 @@ import { Donor } from 'src/user/donor.model';
 import { Doctor } from 'src/user/doctor.model';
 import { ForgetPassword } from 'src/user/forgetPassword.model';
 import { MailerService } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
 
 
 @Injectable()
 export class AuthService {
     constructor(
-        @InjectModel(User) private userModel: typeof User,
         @InjectModel(Hospital) private hospitalModel: typeof Hospital,
         @InjectModel(Admin) private adminModel: typeof Admin,
         @InjectModel(Donor) private donorModel: typeof Donor,
@@ -29,6 +29,7 @@ export class AuthService {
         @InjectModel(ForgetPassword) private forgetPasswordModel: typeof ForgetPassword,
         private jwtService: JwtService,
         private mailService: MailerService,
+        private configService:ConfigService
     ) { }
     async isValidTokenWithUser(token: string) {
         try {
@@ -57,7 +58,9 @@ export class AuthService {
             role: user.role,
             jti: randomUUID(),
         }
-        const accessToken = this.jwtService.sign(payload);
+        const accessToken = this.jwtService.sign(payload,{
+            secret:this.configService.get('JWT_SECRET')
+        });
         const signature = accessToken.split('.')[2];
         await this.tokenModel.create({
             signature,
@@ -73,13 +76,11 @@ export class AuthService {
     }
 
     async resetPassword(resetPasswordDto: ResetPasswordDto) {
-        let user = await this.userModel.findOne({ where: { email: resetPasswordDto.email } });
-        if (!user) user = await this.hospitalModel.findOne({ where: { email: resetPasswordDto.email } });
-        if (!user) user = await this.adminModel.findOne({ where: { email: resetPasswordDto.email } });
-        if (!user) user = await this.donorModel.findOne({ where: { email: resetPasswordDto.email } });
-        if (!user) user = await this.doctorModel.findOne({ where: { email: resetPasswordDto.email } });
+        const userModel=this.getModel(resetPasswordDto.role);
 
-        if (!user) throw new ConflictException('User not found');
+        let user = await userModel.findOne({ where: { email: resetPasswordDto.email } });
+
+        if (!user) throw new NotFoundException('User not found');
 
         const code = Math.floor(100000 + Math.random() * 900000).toString().padStart(6, '0');
         const hashedCode = crypto.createHash('sha256').update(code).digest('hex');
@@ -105,7 +106,7 @@ export class AuthService {
                 passwordResetCode: hashedCode,
                 passwordResetExpires: new Date(Date.now() + 10 * 60 * 1000),
                 passwordResetVerified: false,
-                role: user.role ?? 'user', 
+                role: user.role, 
             });
         }
 
@@ -128,9 +129,9 @@ export class AuthService {
         return { message: 'Reset password code sent to your email' };
     }
 
-    async verifyResetCode(email: string, code: string) {
-        const user = await this.forgetPasswordModel.findOne({ where: { email } });
-        if (!user) {
+    async verifyResetCode(email: string, code: string, role:string) {
+        const resetCode = await this.forgetPasswordModel.findOne({ where: { email } });
+        if (!resetCode) {
             throw new UnauthorizedException('Invalid email or code');
         }
 
@@ -139,83 +140,76 @@ export class AuthService {
             .update(code)
             .digest('hex');
 
-        if (user.passwordResetCode !== hashedCode) {
+        if (resetCode.passwordResetCode !== hashedCode) {
             throw new UnauthorizedException('Invalid code');
         }
 
-        if (user.passwordResetExpires < new Date()) {
+        if (resetCode.passwordResetExpires < new Date()) {
             throw new UnauthorizedException('Code expired');
         }
 
-        if (user.passwordResetVerified) {
+        if (resetCode.passwordResetVerified) {
             throw new UnauthorizedException('Code already verified');
         }
 
         await this.forgetPasswordModel.update(
-            { passwordResetVerified: true, passwordResetCode: hashedCode },
-            { where: { email: email } }
+            { passwordResetVerified: true },
+            { where: { email, role } }
         );
-
-        await this
-        return { message: 'Code verified successfully' };
-    }
-
-
-    async changePassword(changePasswordDto: ChangePasswordDto) {
-        const forgetEntry = await this.forgetPasswordModel.findOne({
-            where: { email: changePasswordDto.email },
-        });
-
-        if (!forgetEntry) {
-            throw new UnauthorizedException('No reset request found for this email');
-        }
-
-        if (!forgetEntry.passwordResetVerified) {
-            throw new UnauthorizedException('Reset code has not been verified');
-        }
-
-        if (changePasswordDto.newPassword === changePasswordDto.oldPassword) {
-            throw new ConflictException('New password must be different from old password');
-        }
-
-
-        let targetModel;
-        const models = [
-            this.userModel,
-            this.hospitalModel,
-            this.adminModel,
-            this.donorModel,
-            this.doctorModel,
-        ];
-
-        for (const model of models) {
-            const user = await model.findOne({ where: { email: changePasswordDto.email } });
-            if (user) {
-                targetModel = model;
-                break;
-            }
-        }
-
-        if (!targetModel) {
-            throw new ConflictException('User record not found');
-        }
-
-        const hashedNewPassword = await bcrypt.hash(changePasswordDto.newPassword, 10);
-        await targetModel.update(
-            { password: hashedNewPassword },
-            { where: { email: changePasswordDto.email } }
-        );
-
-
-        await this.forgetPasswordModel.update(
+        const token = this.jwtService.sign(
+            { email,role, type: 'password_reset' },
             {
-                passwordResetCode: null,
-                passwordResetVerified: false,
-                passwordResetExpires: null,
-            },
-            { where: { email: changePasswordDto.email } }
+                secret:this.configService.get('JWT_SECRET'),
+                expiresIn:'10m'
+            }
         );
-
-        return { message: 'Password changed successfully' };
+        return { token, message: 'Code verified successfully' };
     }
+
+
+    async changePassword(token:string,changePasswordDto: ChangePasswordDto) {
+        let payload;
+        try {
+            payload=await this.jwtService.verify(token,{secret:this.configService.get('JWT_SECRET')});
+        } catch (error) {
+            throw new UnauthorizedException();            
+        }
+            const {payloadEmail,payloadRole}=payload;
+            const {email,role,newPassword,oldPassword}=changePasswordDto;
+            if(email==payloadEmail&&role==payloadRole){
+                if (newPassword === oldPassword) {
+                    throw new ConflictException('New password must be different from old password');
+                }
+                const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+                const model=this.getModel(role);
+                await model.update(
+                    { password: hashedNewPassword },
+                    { where: { email } }
+                );
+                return { message: 'Password changed successfully' };
+            }
+            throw new UnauthorizedException();            
+    }
+
+
+    private getModel(role:string){
+            let model=this.donorModel;
+            switch(role){
+                case 'donor':
+                    model=this.donorModel;
+                    break;
+                case 'doctor':
+                    model=this.doctorModel;
+                    break;
+                case 'hospital':
+                    model=this.hospitalModel;
+                    break;
+                case 'admin':
+                    model=this.adminModel;
+                    break;
+                default:
+                    throw new BadRequestException('user type not provided');
+            }
+            return model;
+        }
 }

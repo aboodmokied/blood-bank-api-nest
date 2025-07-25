@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Req, Res, UseGuards , Body } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res, UseGuards , Body, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { Request, Response } from 'express';
@@ -38,12 +38,17 @@ export class AuthController {
     }
 
     @Post('verify-code') 
-    async verifyCode(@Body('email') email: string, @Body('code') code: string) {
-        return this.authService.verifyResetCode(email, code);
+    async verifyCode(@Body('email') email: string, @Body('code') code: string,@Body('role') role: string) {
+        return this.authService.verifyResetCode(email, code,role);
     }
 
     @Post('change-password')
-  async changePassword(@Body() changePasswordDto: ChangePasswordDto) {
-    return this.authService.changePassword(changePasswordDto);
+  async changePassword(@Req() req:Request,@Body() changePasswordDto: ChangePasswordDto) {
+    const bearerToken=req.headers.authorization;
+    const token=bearerToken?.split(' ')[1];
+    if(!token){
+        throw new UnauthorizedException();
+    }
+    return this.authService.changePassword(token,changePasswordDto);
   }
 }
