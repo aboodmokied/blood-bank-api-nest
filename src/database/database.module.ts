@@ -22,8 +22,8 @@ import { User } from 'src/user/user.model';
                 username: configService.get<string>('DB_USERNAME'),
                 password: configService.get<string>('DB_PASSWORD'),
                 database: configService.get<string>('DB_NAME'),
-                models: [User, Donor, Doctor , Admin, Hospital, ForgetPassword, Token],
-                autoLoadModels: false,
+                // models: [User, Donor, Doctor , Admin, Hospital, ForgetPassword, Token],
+                autoLoadModels: true,
                 synchronize : true,
                 sync: { alter: true },
             })
