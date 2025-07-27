@@ -20,7 +20,7 @@ export class ForgetPassword extends CustomModel {
     @Column({ defaultValue:false })
     declare passwordResetVerified: boolean;
 
-    @Column({ type: DataType.STRING, allowNull: false, unique: true })
+    @Column({ type: DataType.STRING, allowNull: false })
     declare email: string;
 
     @Column({ defaultValue: 'user' })

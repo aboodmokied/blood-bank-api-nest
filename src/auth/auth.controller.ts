@@ -33,8 +33,9 @@ export class AuthController {
 
     // @UseGuards(JwtAuthGuard)
     @Post('reset-password')
-    async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
-        return this.authService.resetPassword(resetPasswordDto);
+    async resetPassword(@Res() res:Response,@Body() resetPasswordDto: ResetPasswordDto) {
+        const {message}=await this.authService.resetPassword(resetPasswordDto);
+        res.status(200).send({message});
     }
 
     @Post('verify-code') 

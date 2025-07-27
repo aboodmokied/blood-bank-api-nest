@@ -79,27 +79,26 @@ export class AuthService {
         const userModel=this.getModel(resetPasswordDto.role);
 
         let user = await userModel.findOne({ where: { email: resetPasswordDto.email } });
-
         if (!user) throw new NotFoundException('User not found');
 
         const code = Math.floor(100000 + Math.random() * 900000).toString().padStart(6, '0');
         const hashedCode = crypto.createHash('sha256').update(code).digest('hex');
 
-        const forgetEntry = await this.forgetPasswordModel.findOne({
-            where: { email: resetPasswordDto.email },
-        });
+        // const forgetEntry = await this.forgetPasswordModel.findOne({
+        //     where: { email: resetPasswordDto.email },
+        // });
 
-        if (forgetEntry) {
+        // if (forgetEntry) {
             
-            await this.forgetPasswordModel.update(
-                {
-                    passwordResetCode: hashedCode,
-                    passwordResetExpires: new Date(Date.now() + 10 * 60 * 1000),
-                    passwordResetVerified: false,
-                },
-                { where: { email: resetPasswordDto.email } }
-            );
-        } else {
+        //     await this.forgetPasswordModel.update(
+        //         {
+        //             passwordResetCode: hashedCode,
+        //             passwordResetExpires: new Date(Date.now() + 10 * 60 * 1000),
+        //             passwordResetVerified: false,
+        //         },
+        //         { where: { email: resetPasswordDto.email } }
+        //     );
+        // } else {
            
             await this.forgetPasswordModel.create({
                 email: resetPasswordDto.email,
@@ -108,24 +107,24 @@ export class AuthService {
                 passwordResetVerified: false,
                 role: user.role, 
             });
-        }
+        // }
 
         const message = `
     Forgot your password? If you didn't forget your password, please ignore this email!
     Your password reset code is ${code}. The code is valid for 10 minutes.`;
 
-        await this.mailService.sendMail({
-            from: 'Blood Bank Admin <' + process.env.EMAIL_USER + '>',
-            to: resetPasswordDto.email,
-            subject: 'Reset Password',
-            html: `
-      <h1>Hello ${user.name},</h1>
-      <p>${message}</p>
-      <p>Your reset code is: <strong>${code}</strong></p>
-      <p>This code will expire in 10 minutes.</p>
-    `,
-        });
-
+    //     await this.mailService.sendMail({
+    //         from: 'Blood Bank Admin <' + process.env.EMAIL_USER + '>',
+    //         to: resetPasswordDto.email,
+    //         subject: 'Reset Password',
+    //         html: `
+    //   <h1>Hello ${user.name},</h1>
+    //   <p>${message}</p>
+    //   <p>Your reset code is: <strong>${code}</strong></p>
+    //   <p>This code will expire in 10 minutes.</p>
+    // `,
+    //     });
+        console.log({code})
         return { message: 'Reset password code sent to your email' };
     }
 
