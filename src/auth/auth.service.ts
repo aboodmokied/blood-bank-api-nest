@@ -174,11 +174,8 @@ export class AuthService {
             throw new UnauthorizedException();            
         }
             const {payloadEmail,payloadRole}=payload;
-            const {email,role,newPassword,oldPassword}=changePasswordDto;
+            const {email,role,newPassword}=changePasswordDto;
             if(email==payloadEmail&&role==payloadRole){
-                if (newPassword === oldPassword) {
-                    throw new ConflictException('New password must be different from old password');
-                }
                 const hashedNewPassword = await bcrypt.hash(newPassword, 10);
                 const model=this.getModel(role);
                 await model.update(
