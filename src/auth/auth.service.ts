@@ -130,7 +130,10 @@ export class AuthService {
     }
 
     async verifyResetCode(email: string, code: string, role:string) {
-        const resetCode = await this.forgetPasswordModel.findOne({ where: { email } });
+        const resetCode = await this.forgetPasswordModel.findOne({ 
+            where: { email,passwordResetVerified:false, role},
+            order: [['createdAt', 'DESC']]
+        });
         if (!resetCode) {
             throw new UnauthorizedException('Invalid email or code');
         }
@@ -146,10 +149,6 @@ export class AuthService {
 
         if (resetCode.passwordResetExpires < new Date()) {
             throw new UnauthorizedException('Code expired');
-        }
-
-        if (resetCode.passwordResetVerified) {
-            throw new UnauthorizedException('Code already verified');
         }
 
         await this.forgetPasswordModel.update(

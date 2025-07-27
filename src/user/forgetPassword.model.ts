@@ -17,7 +17,7 @@ export class ForgetPassword extends CustomModel {
     @Column({ allowNull: true })
     declare passwordResetExpires: Date;
 
-    @Column({ allowNull: true })
+    @Column({ defaultValue:false })
     declare passwordResetVerified: boolean;
 
     @Column({ type: DataType.STRING, allowNull: false, unique: true })
