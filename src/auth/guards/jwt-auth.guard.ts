@@ -9,10 +9,11 @@ export class JwtAuthGuard implements CanActivate{
         const ctx=context.switchToHttp();
         const request=ctx.getRequest<Request>();
         const bearerToken=request.headers.authorization;
+        const role=request.body.role;
         if(bearerToken&&bearerToken.startsWith('Bearer')){
             const token=bearerToken.split(' ')[1];
             if(token){
-                const user=await this.authService.isValidTokenWithUser(token);
+                const user=await this.authService.isValidTokenWithUser(token,role);
                 if(user){
                     request.user=user;
                     return true;

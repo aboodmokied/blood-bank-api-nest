@@ -1,7 +1,10 @@
 import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import { Role } from 'src/types/auth.types';
 import { User } from 'src/user/user.model';
 
-@Table
+@Table({
+  tableName:'tokens'
+})
 export class Token extends Model {
   @Column({
     type: DataType.STRING,
@@ -16,15 +19,21 @@ export class Token extends Model {
   })
   declare revoked: boolean;
 
-  @ForeignKey(()=>User)
+  // @ForeignKey(()=>User)
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  declare userId: boolean;
+  declare userId: number;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  declare role: Role;
 
 
 //   relations
-  @BelongsTo(()=>User)
-  user:User;
+  // @BelongsTo(()=>User)
+  // user:User;
 }

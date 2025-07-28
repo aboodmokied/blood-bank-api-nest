@@ -45,11 +45,6 @@ export class ChangePasswordDto {
     @IsString()
     @MinLength(3, { message: "password must be at least 3 characters" })
     @MaxLength(20, { message: "password must be at most 20 characters" })
-    oldPassword: string;
-
-    @IsString()
-    @MinLength(3, { message: "password must be at least 3 characters" })
-    @MaxLength(20, { message: "password must be at most 20 characters" })
     newPassword: string;
 
     @IsString()

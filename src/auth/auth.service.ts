@@ -5,7 +5,7 @@ import * as bcrypt from 'bcryptjs';
 import { InjectModel } from '@nestjs/sequelize';
 import { Token } from './token.model';
 import { User } from 'src/user/user.model';
-import { AuthPayload } from 'src/types/auth.types';
+import { AuthPayload, Role } from 'src/types/auth.types';
 import { randomUUID } from 'crypto';
 import { ChangePasswordDto, ResetPasswordDto } from './dto/auth.dto';
 import * as crypto from 'crypto';
@@ -31,18 +31,25 @@ export class AuthService {
         private mailService: MailerService,
         private configService:ConfigService
     ) { }
-    async isValidTokenWithUser(token: string) {
+    async isValidTokenWithUser(token: string,role:Role) {
         try {
             const signature = token?.split('.')[2];
             if (signature) {
                 const tokenObj = await this.tokenModel.findOne({
-                    where: { signature, revoked: false },
-                    include: { model: User, attributes: ['id', 'name', 'email'] }
+                    where: { signature, revoked: false,role },
+                    // include: { model: User, attributes: ['id', 'name', 'email'] }
                 });
-                const { sub, email } = this.jwtService.decode<AuthPayload>(token);
-                if (tokenObj && tokenObj.user) {
-                    if (sub == tokenObj.user.id && email == tokenObj.user.email)
-                        return tokenObj.user;
+                const { sub, email,role:payloadRole } = this.jwtService.decode<AuthPayload>(token);
+                if (tokenObj) {
+                    const model=this.getModel(role);
+                    const user=await model.findByPk(tokenObj.userId);
+                    if (user&& sub == user.id && email == user.email && payloadRole==user.role)
+                        return {
+                            email:user.email,
+                            name:user.name,
+                            id:user.id,
+                            role:user.role
+                        };
                 }
             }
             return null;
@@ -64,7 +71,8 @@ export class AuthService {
         const signature = accessToken.split('.')[2];
         await this.tokenModel.create({
             signature,
-            userId: user.id
+            userId: user.id,
+            role:user.role
         })
         const {id,name,email,role}=user;
         return {token:accessToken,user:{id,name,email,role}};
@@ -168,12 +176,18 @@ export class AuthService {
     async changePassword(token:string,changePasswordDto: ChangePasswordDto) {
         let payload;
         try {
-            payload=await this.jwtService.verify(token,{secret:this.configService.get('JWT_SECRET')});
+            payload=await this.jwtService.verify(token,{ignoreExpiration:false,secret:this.configService.get('JWT_SECRET')});
         } catch (error) {
             throw new UnauthorizedException();            
         }
-            const {payloadEmail,payloadRole}=payload;
+            const {email:payloadEmail,role:payloadRole}=payload;
             const {email,role,newPassword}=changePasswordDto;
+            console.log({
+                payload,
+                role,
+                email,
+                newPassword
+            });
             if(email==payloadEmail&&role==payloadRole){
                 const hashedNewPassword = await bcrypt.hash(newPassword, 10);
                 const model=this.getModel(role);

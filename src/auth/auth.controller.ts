@@ -39,17 +39,19 @@ export class AuthController {
     }
 
     @Post('verify-code') 
-    async verifyCode(@Body('email') email: string, @Body('code') code: string,@Body('role') role: string) {
-        return this.authService.verifyResetCode(email, code,role);
+    async verifyCode(@Res() res:Response,@Body('email') email: string, @Body('code') code: string,@Body('role') role: string) {
+        const {message,token}=await this.authService.verifyResetCode(email, code,role);
+        res.status(200).send({message,token});
     }
 
     @Post('change-password')
-  async changePassword(@Req() req:Request,@Body() changePasswordDto: ChangePasswordDto) {
+  async changePassword(@Res() res:Response,@Req() req:Request,@Body() changePasswordDto: ChangePasswordDto) {
     const bearerToken=req.headers.authorization;
     const token=bearerToken?.split(' ')[1];
     if(!token){
         throw new UnauthorizedException();
     }
-    return this.authService.changePassword(token,changePasswordDto);
+    const{message}=await this.authService.changePassword(token,changePasswordDto);
+    res.status(200).send({message});
   }
 }
