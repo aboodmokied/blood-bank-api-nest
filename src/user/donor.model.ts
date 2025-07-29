@@ -1,5 +1,6 @@
-import { Table, Column, DataType } from 'sequelize-typescript';
+import { Table, Column, DataType, HasOne } from 'sequelize-typescript';
 import { CustomModel } from 'src/custom-model/custom-model';
+import { MedicalHistory } from 'src/medical-history/models/medical-history';
 import { Role } from 'src/types/auth.types';
 
 
@@ -26,6 +27,9 @@ export class Donor extends CustomModel{
     unique: true,
   })
   declare password: string;
+
+  @HasOne(() => MedicalHistory)
+  declare medicalHistory?: MedicalHistory;
 
   @Column({ defaultValue: 'donor' })
   declare role: Role;

@@ -2,12 +2,15 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Token } from 'src/auth/token.model';
+import { MedicalHistory } from 'src/medical-history/models/medical-history';
+import { MedicalHistoryLog } from 'src/medical-history/models/medical-history-logs';
 import { Admin } from 'src/user/admin.model';
 import { Doctor } from 'src/user/doctor.model';
 import { Donor } from 'src/user/donor.model';
 import { ForgetPassword } from 'src/user/forgetPassword.model';
 import { Hospital } from 'src/user/hopsital.model';
 import { User } from 'src/user/user.model';
+import { factory } from 'typescript';
 
 
 @Module({
@@ -22,8 +25,8 @@ import { User } from 'src/user/user.model';
                 username: configService.get<string>('DB_USERNAME'),
                 password: configService.get<string>('DB_PASSWORD'),
                 database: configService.get<string>('DB_NAME'),
-                // models: [User, Donor, Doctor , Admin, Hospital, ForgetPassword, Token],
-                autoLoadModels: true,
+                models: [User, Donor, Doctor , Admin, Hospital, ForgetPassword, Token , MedicalHistory , MedicalHistoryLog],
+                autoLoadModels: false, 
                 synchronize : true,
                 sync: { alter: true },
             })
