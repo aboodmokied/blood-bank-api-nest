@@ -6,7 +6,7 @@ import { MedicalHistoryController } from './medical-history.controller';
 import { MedicalHistoryLog } from './models/medical-history-logs';
 import { Donor } from 'src/user/donor.model';
 import { AuthModule } from 'src/auth/auth.module';
-import { MedicalHistoryServiceLogs } from './medical-history-logs.service';
+
 
 
 @Module({
@@ -15,7 +15,7 @@ import { MedicalHistoryServiceLogs } from './medical-history-logs.service';
     AuthModule 
   ],
   controllers: [MedicalHistoryController],
-  providers: [MedicalHistoryService , MedicalHistoryServiceLogs],
+  providers: [MedicalHistoryService ],
   exports: [MedicalHistoryService],
 })
 export class MedicalHistoryModule {}
