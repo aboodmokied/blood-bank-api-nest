@@ -49,20 +49,20 @@ export class UserService {
         });
     }
 
-    private getModel(role:string){
-        let model=this.donorModel;
-        switch(role){
+    private getModel(role: string): any {
+        let model: any;
+        switch (role) {
             case 'donor':
-                model=this.donorModel;
+                model = this.donorModel;
                 break;
             case 'doctor':
-                model=this.doctorModel;
+                model = this.doctorModel;
                 break;
             case 'hospital':
-                model=this.hospitalModel;
+                model = this.hospitalModel;
                 break;
             case 'admin':
-                model=this.adminModel;
+                model = this.adminModel;
                 break;
             default:
                 throw new BadRequestException('user type not provided');

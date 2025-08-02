@@ -25,6 +25,13 @@ export class MedicalHistoryLog extends Model {
   @Column({ type: DataType.DATE, defaultValue: DataType.NOW })
   timestamp: Date;
 
+  @Column({
+  type: DataType.STRING,
+  allowNull: false,
+  defaultValue:  'Under review',
+})
+declare status: string;
+
   @Column({ defaultValue: 'donor' })
   declare role: Role;
 

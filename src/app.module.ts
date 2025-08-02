@@ -8,6 +8,12 @@ import { ConfigModule } from '@nestjs/config';
 import { RolesModule } from './roles/roles.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MedicalHistoryModule } from './medical-history/medical-history.module';
+import { BloodTypeModule } from './blood-types/blood-type.module';
+import { BloodInventoryModule } from './blood-inventory/blood-inventory.module';
+import { BloodRequestModule } from './blood-request/blood-request.module';
+import { ReceiverModule } from './receiver/receiver.module';
+import { In } from 'typeorm';
+import { IncomingRequestsModule } from './Incoming requests/Incoming-requests.module';
 
 
 @Module({
@@ -43,7 +49,13 @@ import { MedicalHistoryModule } from './medical-history/medical-history.module';
     AuthModule,
     UserModule,
     RolesModule,
-    MedicalHistoryModule
+    MedicalHistoryModule,
+    BloodTypeModule,
+    BloodInventoryModule,
+    BloodRequestModule,
+    ReceiverModule,
+    IncomingRequestsModule,
+
   ],
   controllers: [AppController],
   providers: [AppService],
