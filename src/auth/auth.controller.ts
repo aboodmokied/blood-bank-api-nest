@@ -28,6 +28,7 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     @Get('me')
     me(@Req() req:Request){
+        console.log('ssaa');
         return {user:req.user}
     }
 
