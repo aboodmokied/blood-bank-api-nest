@@ -1,32 +1,27 @@
 import {
-  IsNotEmpty,
-  IsString,
-  IsArray,
+  IsEnum,
   IsOptional,
+  IsString,
+  IsDateString,
   IsInt,
-  Min
+  Min,
 } from 'class-validator';
 
 export class CreateMedicalHistoryDto {
-  @IsNotEmpty()
+  @IsInt()
+  @Min(1, { message: 'donorId must be a positive integer' })
+  donorId: number;
+
   @IsString()
   condition: string;
-
-  @IsNotEmpty()
-  @IsString({ each: true })
-  allergies: string;
-
-  @IsNotEmpty()
-
-  @IsString({ each: true })
-  surgeries: string;
 
   @IsOptional()
   @IsString()
   notes?: string;
 
-  @IsNotEmpty()
-  @IsInt()
-  @Min(1)
-  donorId: number;
+  @IsDateString(
+    {},
+    { message: 'diagnosedAt must be a valid ISO date (yyyy-mm-dd)' },
+  )
+  diagnosedAt: Date;
 }

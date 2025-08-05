@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { MedicalHistory } from './models/medical-history';
+import { MedicalHistory } from './models/medical-history.model';
 import { MedicalHistoryService } from './medical-history.service';
 import { MedicalHistoryController } from './medical-history.controller';
 import { MedicalHistoryLog } from './models/medical-history-logs';

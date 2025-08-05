@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Token } from 'src/auth/token.model';
-import { MedicalHistory } from 'src/medical-history/models/medical-history';
+import { MedicalHistory } from 'src/medical-history/models/medical-history.model';
 import { MedicalHistoryLog } from 'src/medical-history/models/medical-history-logs';
 import { Admin } from 'src/user/admin.model';
 import { Doctor } from 'src/user/doctor.model';

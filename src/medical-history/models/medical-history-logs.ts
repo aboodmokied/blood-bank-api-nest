@@ -7,7 +7,7 @@ import {
   ForeignKey,
   BelongsTo,
 } from 'sequelize-typescript';
-import { MedicalHistory } from './medical-history';
+import { MedicalHistory } from './medical-history.model';
 import { Role } from 'src/types/auth.types';
 
 @Table({ tableName: 'medical_history_logs' })
