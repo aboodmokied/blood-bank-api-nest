@@ -23,7 +23,7 @@ export class MedicalHistory extends CustomModel {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   declare notes: string;
 

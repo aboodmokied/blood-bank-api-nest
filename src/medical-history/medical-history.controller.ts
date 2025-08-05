@@ -56,9 +56,9 @@ export class MedicalHistoryController {
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async getMedicalHistoriesByDonorId(@Param('id') donorId: number) {
+  async getMedicalHistoriesByDonorId(@Param('id') donorId: string) {
     const { medicalHistory } =
-      await this.medicalHistoryService.getMedicalHistoriesByDonorId(donorId);
+      await this.medicalHistoryService.getMedicalHistoriesByDonorId(+donorId);
     return { medicalHistory };
   }
 }
