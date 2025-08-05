@@ -1,4 +1,30 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateMedicalHistoryDto } from './create-medical-history.dto';
+import {
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsDateString,
+  IsInt,
+  Min,
+} from 'class-validator';
 
-export class UpdateMedicalHistoryDto extends PartialType(CreateMedicalHistoryDto) {}
+export class UpdateMedicalHistoryDto {
+  @IsOptional()
+  @IsString()
+  condition?: string;
+
+  @IsOptional()
+  @IsString()
+  notes?: string;
+
+  @IsOptional()
+  @IsDateString(
+    {},
+    { message: 'diagnosedAt must be a valid ISO date (yyyy-mm-dd)' },
+  )
+  diagnosedAt?: Date;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  donorId?: number; // optional, in case you want to allow changing ownership
+}

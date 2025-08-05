@@ -23,7 +23,7 @@ export class MedicalHistoryController {
 
   @RolesDecorator('doctor')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Post('create')
+  @Post()
   @HttpCode(HttpStatus.CREATED)
   async createMedicalHistory(
     @Body() createMedicalHistoryDto: CreateMedicalHistoryDto,
@@ -37,14 +37,18 @@ export class MedicalHistoryController {
 
   @RolesDecorator('doctor')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Patch('update')
+  @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  updateMedicalHistory(
+  async updateMedicalHistory(
+    @Param('id') id: string,
     @Body() updateMedicalHistoryDto: UpdateMedicalHistoryDto,
   ) {
-    return this.medicalHistoryService.updateMedicalHistory(
-      updateMedicalHistoryDto,
-    );
+    const { updatedMedicalHistory } =
+      await this.medicalHistoryService.updateMedicalHistory(
+        +id,
+        updateMedicalHistoryDto,
+      );
+    return { updatedMedicalHistory };
   }
 
   // @RolesDecorator('doctor')

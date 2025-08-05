@@ -32,33 +32,27 @@ export class MedicalHistoryService {
     return { medicalHistory: newMedicalHistory };
   }
 
-  async updateMedicalHistory(updateMedicalHistoryDto: UpdateMedicalHistoryDto) {
-    const donor = await this.donorModel.findByPk(
-      updateMedicalHistoryDto.donorId,
-    );
+  async updateMedicalHistory(
+    id: number,
+    updateMedicalHistoryDto: UpdateMedicalHistoryDto,
+  ) {
+    const { donorId } = updateMedicalHistoryDto;
+    const donor = await this.donorModel.findByPk(donorId);
     if (!donor) {
       throw new NotFoundException('Donor Not Found');
     }
 
-    const medicalHistory = await this.medicalHistoryModel.findOne({
-      where: { donorId: updateMedicalHistoryDto.donorId },
-    });
+    const medicalHistory = await this.medicalHistoryModel.findByPk(id);
 
     if (!medicalHistory) {
       throw new NotFoundException('Medical history not found');
     }
 
-    const updated = await medicalHistory.update(updateMedicalHistoryDto);
+    const updatedMedicalHistory = await medicalHistory.update(
+      updateMedicalHistoryDto,
+    );
 
-    await this.medicalHistoryLogModel.create({
-      medicalHistoryId: updated.id,
-      action: 'UPDATE',
-      changedBy: Doctor.name,
-      changes: JSON.stringify(updateMedicalHistoryDto),
-      // timestamp: new Date(),
-    });
-
-    return updated;
+    return { updatedMedicalHistory };
   }
 
   async getMedicalHistoriesByDonorId(donorId: number) {
