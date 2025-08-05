@@ -61,16 +61,12 @@ export class MedicalHistoryService {
     return updated;
   }
 
-  async getMedicalHistoryByDonorId(donorId: number) {
-    const medicalHistory = await this.medicalHistoryModel.findOne({
+  async getMedicalHistoriesByDonorId(donorId: number) {
+    const medicalHistory = await this.medicalHistoryModel.findAll({
       where: { donorId },
       include: [{ model: Donor, attributes: ['id', 'name', 'email'] }],
     });
 
-    if (!medicalHistory) {
-      throw new NotFoundException('Medical history not found for this donor');
-    }
-
-    return medicalHistory;
+    return { medicalHistory };
   }
 }
