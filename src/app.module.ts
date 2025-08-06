@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { RolesModule } from './roles/roles.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MedicalHistoryModule } from './medical-history/medical-history.module';
+import { BloodRequestModule } from './blood-request/blood-request.module';
 
 
 @Module({
@@ -43,7 +44,8 @@ import { MedicalHistoryModule } from './medical-history/medical-history.module';
     AuthModule,
     UserModule,
     RolesModule,
-    MedicalHistoryModule
+    MedicalHistoryModule,
+    BloodRequestModule
   ],
   controllers: [AppController],
   providers: [AppService],
