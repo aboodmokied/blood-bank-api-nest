@@ -9,7 +9,7 @@ import { RolesModule } from './roles/roles.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MedicalHistoryModule } from './medical-history/medical-history.module';
 import { BloodRequestModule } from './blood-request/blood-request.module';
-
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
@@ -17,14 +17,14 @@ import { BloodRequestModule } from './blood-request/blood-request.module';
       isGlobal: true, // Makes ConfigService available app-wide
     }),
     MailerModule.forRoot({
-      transport:{
-        service : process.env.EMAIL_SERVICE,
+      transport: {
+        service: process.env.EMAIL_SERVICE,
         secure: true, // true for 465, false for other ports
         auth: {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASSWORD,
         },
-      }
+      },
     }),
     // SequelizeModule.forRootAsync({
     //   imports: [ConfigModule],
@@ -45,7 +45,8 @@ import { BloodRequestModule } from './blood-request/blood-request.module';
     UserModule,
     RolesModule,
     MedicalHistoryModule,
-    BloodRequestModule
+    BloodRequestModule,
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService],
