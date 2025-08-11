@@ -1,4 +1,11 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsDateString } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsDateString,
+} from 'class-validator';
 import { Roles } from 'src/roles/roles.enum';
 import { Role } from 'src/types/auth.types';
 
@@ -7,24 +14,28 @@ export class CreateProfileDto {
   @IsNotEmpty()
   gender: string;
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  age: string;
+  userId: number;
+
+  // @IsString()
+  // @IsNotEmpty()
+  // age: string;
 
   @IsString()
   @IsNotEmpty()
-  location: string;
+  location?: string;
 
   @IsOptional()
-  @IsDateString() 
-  birthdate?: string;
+  @IsDateString()
+  birthdate: string;
 
   @IsOptional()
   @IsString()
   photo?: string;
 
-  @IsOptional()
-  @IsEnum(Roles, { message: 'role must be one of: donor, doctor, hospital, admin' })
-  role?: Role;
+  @IsEnum(Roles, {
+    message: 'role must be one of: donor, doctor, hospital, admin',
+  })
+  role: Role;
 }
-

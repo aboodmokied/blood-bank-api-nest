@@ -8,11 +8,15 @@ import { Admin } from './admin.model';
 import { Doctor } from './doctor.model';
 import { Donor } from './donor.model';
 import { Hospital } from './hopsital.model';
+import { ProfileModule } from 'src/profile/profile.module';
 
 @Module({
-  imports:[SequelizeModule.forFeature([User,Admin,Doctor,Donor,Hospital]),forwardRef(() => AuthModule),],
+  imports: [
+    SequelizeModule.forFeature([User, Admin, Doctor, Donor, Hospital]),
+    forwardRef(() => AuthModule),
+  ],
   providers: [UserService],
   controllers: [UserController],
-  exports:[UserService]
+  exports: [UserService],
 })
 export class UserModule {}
