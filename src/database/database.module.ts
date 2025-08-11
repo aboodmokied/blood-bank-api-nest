@@ -11,6 +11,7 @@ import { ForgetPassword } from 'src/user/forgetPassword.model';
 import { Hospital } from 'src/user/hopsital.model';
 import { User } from 'src/user/user.model';
 import { factory } from 'typescript';
+import { ProfileModel } from 'src/profile/models/profile.model';
 
 @Module({
   imports: [
@@ -24,10 +25,10 @@ import { factory } from 'typescript';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        // models: [User, Donor, Doctor , Admin, Hospital, ForgetPassword, Token , MedicalHistory , MedicalHistoryLog],
-        autoLoadModels: true,
+        models: [User, Donor, Doctor , Admin, Hospital, ForgetPassword, Token , MedicalHistory , MedicalHistoryLog, ProfileModel],
+        autoLoadModels: false,
         synchronize: true,
-        sync: { alter: true },
+        sync: { alter: false },
       }),
     }),
   ],
