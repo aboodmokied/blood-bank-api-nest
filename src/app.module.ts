@@ -10,6 +10,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { MedicalHistoryModule } from './medical-history/medical-history.module';
 import { BloodRequestModule } from './blood-request/blood-request.module';
 import { ProfileModule } from './profile/profile.module';
+import { AppointmentModule } from './appointment/appointment.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { ProfileModule } from './profile/profile.module';
     MedicalHistoryModule,
     BloodRequestModule,
     ProfileModule,
+    AppointmentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

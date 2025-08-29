@@ -9,6 +9,7 @@ import { CreateProfileDto } from './dto/create-profile.dto';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Role } from 'src/types/auth.types';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Injectable()
 export class ProfileService {
@@ -47,6 +48,18 @@ export class ProfileService {
     return { profile };
   }
 
+  async initProfile(userId: number, role: Role) {
+    const isExist = await this.profileModel.count({
+      where: { role, userId },
+    });
+    if (!isExist) {
+      await this.profileModel.create({
+        role,
+        userId,
+      });
+    }
+  }
+
   async findOne(role: Role, id: number) {
     const profile = await this.profileModel.findOne({
       where: { role, userId: id },
@@ -54,6 +67,25 @@ export class ProfileService {
     if (!profile) {
       throw new NotFoundException('profile not found');
     }
+    return { profile };
+  }
+
+  async updateProfile(id: number, updateProfileDto: UpdateProfileDto) {
+    const profile = await this.profileModel.findByPk(id);
+    if (!profile) {
+      throw new NotFoundException('profile not found');
+    }
+    await profile.update(updateProfileDto);
+    return { profile };
+  }
+
+  async uploadProfileImage(id: number, file: Express.Multer.File) {
+    const profile = await this.profileModel.findByPk(id);
+    if (!profile) {
+      throw new NotFoundException('profile not found');
+    }
+    const path = `/uploads/${file.filename}`;
+    await profile.update({ photo: path });
     return { profile };
   }
 }

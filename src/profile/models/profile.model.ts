@@ -12,7 +12,7 @@ export class ProfileModel extends CustomModel {
   })
   declare userId: string;
   @Column({
-    allowNull: false,
+    allowNull: true,
   })
   declare gender: string;
 
@@ -24,9 +24,15 @@ export class ProfileModel extends CustomModel {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   declare location: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  declare bloodType: string;
 
   @Column({
     type: DataType.STRING,

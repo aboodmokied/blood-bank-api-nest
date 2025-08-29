@@ -7,6 +7,7 @@ import { Admin } from './admin.model';
 import { Donor } from './donor.model';
 import { Hospital } from './hopsital.model';
 import { Doctor } from './doctor.model';
+import { ProfileService } from 'src/profile/profile.service';
 
 @Injectable()
 export class UserService {
@@ -21,6 +22,7 @@ export class UserService {
     private hospitalModel: typeof Hospital,
     @InjectModel(Doctor)
     private doctorModel: typeof Doctor,
+    private profileService: ProfileService,
   ) {}
 
   async validateUser(validateUserDto: ValidateUserDto) {
@@ -46,7 +48,7 @@ export class UserService {
       password: bcrypt.hashSync(password, 12),
       role,
     });
-
+    this.profileService.initProfile(user.id, user.role);
     return { user };
   }
 

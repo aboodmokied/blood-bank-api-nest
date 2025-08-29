@@ -14,6 +14,7 @@ import { ProfileModule } from 'src/profile/profile.module';
   imports: [
     SequelizeModule.forFeature([User, Admin, Doctor, Donor, Hospital]),
     forwardRef(() => AuthModule),
+    ProfileModule,
   ],
   providers: [UserService],
   controllers: [UserController],
