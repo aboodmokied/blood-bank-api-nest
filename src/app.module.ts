@@ -11,6 +11,7 @@ import { MedicalHistoryModule } from './medical-history/medical-history.module';
 import { BloodRequestModule } from './blood-request/blood-request.module';
 import { ProfileModule } from './profile/profile.module';
 import { AppointmentModule } from './appointment/appointment.module';
+import { DonationModule } from './donation/donation.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { AppointmentModule } from './appointment/appointment.module';
     BloodRequestModule,
     ProfileModule,
     AppointmentModule,
+    DonationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
