@@ -3,6 +3,13 @@ import { CustomModel } from 'src/custom-model/custom-model';
 import { Donor } from 'src/user/donor.model';
 import { Hospital } from 'src/user/hopsital.model';
 
+export type AppointmentStatus =
+  | 'pending'
+  | 'confirmed'
+  | 'cancelled'
+  | 'completed'
+  | 'missed';
+
 @Table
 export class Appointment extends CustomModel {
   @ForeignKey(() => Hospital)
@@ -20,8 +27,14 @@ export class Appointment extends CustomModel {
   declare date: string;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM(
+      'pending',
+      'confirmed',
+      'cancelled',
+      'completed',
+      'missed',
+    ),
     allowNull: false,
   })
-  declare status: string;
+  declare status: AppointmentStatus;
 }

@@ -1,34 +1,71 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  Query,
+} from '@nestjs/common';
 import { AppointmentService } from './appointment.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
+import { AppointmentStatus } from './appointment.model';
 
-@Controller('appointment')
+@Controller('appointments')
 export class AppointmentController {
   constructor(private readonly appointmentService: AppointmentService) {}
 
+  // Create appointment
   @Post()
-  create(@Body() createAppointmentDto: CreateAppointmentDto) {
+  async create(@Body() createAppointmentDto: CreateAppointmentDto) {
     return this.appointmentService.create(createAppointmentDto);
   }
 
+  // Get all appointments (with pagination)
   @Get()
-  findAll() {
-    return this.appointmentService.findAll();
+  async findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
+    return this.appointmentService.findAll(Number(page), Number(limit));
   }
 
+  // Get appointment by id
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.appointmentService.findOne(+id);
+  async findOne(@Param('id') id: number) {
+    return this.appointmentService.findOne(Number(id));
   }
 
+  // Get appointments by specific day
+  @Get('day/:day')
+  async findByDay(
+    @Param('day') day: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    return this.appointmentService.findByDay(day, Number(page), Number(limit));
+  }
+
+  // Update appointment
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAppointmentDto: UpdateAppointmentDto) {
-    return this.appointmentService.update(+id, updateAppointmentDto);
+  async update(
+    @Param('id') id: number,
+    @Body() updateAppointmentDto: UpdateAppointmentDto,
+  ) {
+    return this.appointmentService.update(Number(id), updateAppointmentDto);
   }
 
+  // Delete appointment
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.appointmentService.remove(+id);
+  async remove(@Param('id') id: number) {
+    return this.appointmentService.remove(Number(id));
+  }
+
+  // Change appointment status
+  @Patch(':id/status')
+  async changeStatus(
+    @Param('id') id: number,
+    @Body('status') newStatus: AppointmentStatus,
+  ) {
+    return this.appointmentService.changeStatus(Number(id), newStatus);
   }
 }
