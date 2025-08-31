@@ -37,7 +37,7 @@ export class Donation extends CustomModel {
     type: DataType.INTEGER,
     allowNull: false,
   })
-  declare volume: number; // e.g., in milliliters
+  declare volume: number;
 
   @Column({
     type: DataType.STRING,

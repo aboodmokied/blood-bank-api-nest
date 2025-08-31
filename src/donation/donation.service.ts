@@ -7,19 +7,29 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Donation, DonationStatus } from './donation.model';
 import { CreateDonationDto } from './dto/create-donation.dto';
 import { UpdateDonationDto } from './dto/update-donation.dto';
+import { BloodUnitService } from 'src/blood-unit/blood-unit.service';
+import { UnitStatus } from 'src/blood-unit/blood-unit.model';
 
 @Injectable()
 export class DonationService {
   constructor(
     @InjectModel(Donation)
     private donationModel: typeof Donation,
+    private bloodUnitService: BloodUnitService,
   ) {}
 
   async create(createDonationDto: CreateDonationDto) {
     const donation = await this.donationModel.create({
       ...createDonationDto,
     });
-    return { donation };
+
+    await this.bloodUnitService.create({
+      bloodType: donation.bloodType,
+      donationId: donation.id,
+      collectedAt: Date.now().toString(),
+      status: UnitStatus.PENDING,
+    });
+    return { donation, message: 'donation created successfully' };
   }
 
   async findAll(page = 1, limit = 10) {

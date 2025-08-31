@@ -12,6 +12,8 @@ import { BloodRequestModule } from './blood-request/blood-request.module';
 import { ProfileModule } from './profile/profile.module';
 import { AppointmentModule } from './appointment/appointment.module';
 import { DonationModule } from './donation/donation.module';
+import { BloodUnitModule } from './blood-unit/blood-unit.module';
+import { MedicalTestModule } from './medical-test/medical-test.module';
 
 @Module({
   imports: [
@@ -51,6 +53,8 @@ import { DonationModule } from './donation/donation.module';
     ProfileModule,
     AppointmentModule,
     DonationModule,
+    BloodUnitModule,
+    MedicalTestModule,
   ],
   controllers: [AppController],
   providers: [AppService],
