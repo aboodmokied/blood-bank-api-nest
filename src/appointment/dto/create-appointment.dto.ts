@@ -22,6 +22,6 @@ export class CreateAppointmentDto {
 
   @IsString()
   @IsIn(['pending', 'confirmed', 'cancelled', 'completed', 'missed'])
-  @IsNotEmpty()
+  // @IsNotEmpty()
   status: AppointmentStatus;
 }

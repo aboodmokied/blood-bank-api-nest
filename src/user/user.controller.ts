@@ -6,6 +6,8 @@ import {
   Body,
   Get,
   Res,
+  Param,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Request, Response } from 'express';
@@ -13,6 +15,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RegisterUserDto } from './dto/create-user.dto';
 import { RolesGuard } from 'src/roles/guards/roles.guard';
 import { RolesDecorator } from 'src/roles/roles.decorator';
+import { Role } from 'src/types/auth.types';
 
 // @UseGuards(JwtAuthGuard)
 @Controller('user')
@@ -22,6 +25,23 @@ export class UserController {
   async register(@Body() registerUserDto: RegisterUserDto) {
     const { user } = await this.userService.registerUser(registerUserDto);
     return { user };
+  }
+
+  // TODO: add role authorization
+  @Get(':role')
+  async finaAll(
+    @Param('role') role: Role,
+    @Query('search') search: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    const { users, pagination } = await this.userService.findAllByRole(
+      role,
+      +page,
+      +limit,
+      search,
+    );
+    return { users, pagination };
   }
   @RolesDecorator('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)

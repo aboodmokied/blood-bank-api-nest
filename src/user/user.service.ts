@@ -8,6 +8,7 @@ import { Donor } from './donor.model';
 import { Hospital } from './hopsital.model';
 import { Doctor } from './doctor.model';
 import { ProfileService } from 'src/profile/profile.service';
+import { Role } from 'src/types/auth.types';
 
 @Injectable()
 export class UserService {
@@ -52,7 +53,35 @@ export class UserService {
     return { user };
   }
 
-  private getModel(role: string) {
+  async findAllByRole(role: Role, page = 1, limit = 10, search?: string) {
+    const model = this.getModel(role);
+    let resule: { data: any; pagination: any } = {
+      data: [],
+      pagination: null,
+    };
+    if (search) {
+      resule = await model.findWithPaginationAndSearch(
+        page,
+        limit,
+        {},
+        search,
+        ['name', 'email'],
+      );
+    } else {
+      resule = await model.findWithPagination(page, limit);
+    }
+    const { data: users, pagination } = resule;
+    return { users, pagination };
+  }
+
+  private getModel(
+    role: Role,
+  ):
+    | typeof this.adminModel
+    | typeof this.doctorModel
+    | typeof this.adminModel
+    | typeof this.donorModel
+    | typeof this.hospitalModel {
     let model = this.donorModel;
     switch (role) {
       case 'donor':

@@ -7,6 +7,7 @@ import {
   Param,
   Body,
   Query,
+  HttpCode,
 } from '@nestjs/common';
 import { AppointmentService } from './appointment.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
@@ -19,6 +20,7 @@ export class AppointmentController {
 
   // Create appointment
   @Post()
+  @HttpCode(201)
   async create(@Body() createAppointmentDto: CreateAppointmentDto) {
     return this.appointmentService.create(createAppointmentDto);
   }
@@ -45,6 +47,20 @@ export class AppointmentController {
     return this.appointmentService.findByDay(day, Number(page), Number(limit));
   }
 
+  // Get appointments by donor
+  @Get('donor/:id')
+  async findByDonor(
+    @Param('id') id: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    return this.appointmentService.findByDonor(
+      Number(id),
+      Number(page),
+      Number(limit),
+    );
+  }
+
   // Update appointment
   @Patch(':id')
   async update(
@@ -67,5 +83,10 @@ export class AppointmentController {
     @Body('status') newStatus: AppointmentStatus,
   ) {
     return this.appointmentService.changeStatus(Number(id), newStatus);
+  }
+
+  @Patch(':id/cancle')
+  async cancleAppointment(@Param('id') id: number) {
+    return this.appointmentService.cancleAppointment(Number(id));
   }
 }

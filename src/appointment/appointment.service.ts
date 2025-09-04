@@ -54,6 +54,15 @@ export class AppointmentService {
     return { appointments, pagination };
   }
 
+  async findByDonor(id: number, page = 1, limit = 10) {
+    const { data: appointments, pagination } =
+      await this.appointmentModel.findWithPagination(page, limit, {
+        where: { donorId: id },
+      });
+
+    return { appointments, pagination };
+  }
+
   async update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
     const appointment = await this.appointmentModel.findByPk(id);
     if (!appointment) {
@@ -87,6 +96,24 @@ export class AppointmentService {
     }
 
     appointment.status = newStatus;
+    await appointment.save();
+
+    return appointment;
+  }
+
+  async cancleAppointment(id: number) {
+    const appointment = await this.appointmentModel.findByPk(id);
+    if (!appointment) {
+      throw new NotFoundException('Appointment not found');
+    }
+
+    const allowedStatuses = ['pending', 'confirmed'];
+
+    if (!allowedStatuses.includes(appointment.status)) {
+      throw new BadRequestException('Invalid status');
+    }
+
+    appointment.status = 'cancelled';
     await appointment.save();
 
     return appointment;
