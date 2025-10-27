@@ -63,6 +63,30 @@ export class AppointmentService {
     return { appointments, pagination };
   }
 
+  async findByHospital(id: number, page = 1, limit = 10, search?: string) {
+    if (search) {
+      const { data: appointments, pagination } =
+        await this.appointmentModel.findWithPaginationAndSearch(
+          page,
+          limit,
+          {
+            where: { hospitalId: id },
+          },
+          search,
+          ['date', 'donorId'],
+        );
+
+      return { appointments, pagination };
+    } else {
+      const { data: appointments, pagination } =
+        await this.appointmentModel.findWithPagination(page, limit, {
+          where: { hospitalId: id },
+        });
+
+      return { appointments, pagination };
+    }
+  }
+
   async update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
     const appointment = await this.appointmentModel.findByPk(id);
     if (!appointment) {

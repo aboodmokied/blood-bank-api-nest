@@ -3,6 +3,7 @@ import { CustomModel } from 'src/custom-model/custom-model';
 import { Donor } from 'src/user/donor.model';
 import { Hospital } from 'src/user/hopsital.model';
 import { Appointment } from 'src/appointment/appointment.model';
+import { Doctor } from 'src/user/doctor.model';
 
 export type DonationStatus = 'collected' | 'tested' | 'stored' | 'discarded';
 
@@ -15,6 +16,10 @@ export class Donation extends CustomModel {
   @ForeignKey(() => Hospital)
   @Column({ type: DataType.INTEGER, allowNull: false })
   declare hospitalId: number;
+
+  @ForeignKey(() => Doctor)
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  declare doctorId: number;
 
   @ForeignKey(() => Appointment)
   @Column({ type: DataType.INTEGER, allowNull: true })

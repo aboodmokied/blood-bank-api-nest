@@ -61,6 +61,22 @@ export class AppointmentController {
     );
   }
 
+  // Get appointments by hospital
+  @Get('hospital/:id')
+  async findByHospital(
+    @Param('id') id: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query('search') search?: string,
+  ) {
+    return this.appointmentService.findByHospital(
+      Number(id),
+      Number(page),
+      Number(limit),
+      search,
+    );
+  }
+
   // Update appointment
   @Patch(':id')
   async update(
