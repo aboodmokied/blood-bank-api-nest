@@ -36,12 +36,18 @@ export class StockController {
     return this.stockService.getUnit(id);
   }
 
-  // Update status after medical testing
-  @Patch('units/:id/status')
-  updateUnitStatus(
-    @Param('id') id: number,
-    @Body('status') status: UnitStatus,
-  ) {
-    return this.stockService.updateUnitStatus(id, status);
+  // get stock statistics
+  @Get('hospitals/:hospitalId/statistics')
+  getStatistics(@Param('hospitalId') hospitalId: number) {
+    return this.stockService.getBloodTypeStatistics(hospitalId);
   }
+
+  // Update status after medical testing
+  //   @Patch('units/:id/status')
+  //   updateUnitStatus(
+  //     @Param('id') id: number,
+  //     @Body('status') status: UnitStatus,
+  //   ) {
+  //     return this.stockService.updateUnitStatus(id, status);
+  //   }
 }
