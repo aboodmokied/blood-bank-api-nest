@@ -1,26 +1,58 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
+import { MedicalTest, TestResult } from './medical-test.model';
+import { Donation, DonationStatus } from 'src/donation/donation.model';
+import { BloodUnit, UnitStatus } from 'src/blood-unit/blood-unit.model';
 import { CreateMedicalTestDto } from './dto/create-medical-test.dto';
-import { UpdateMedicalTestDto } from './dto/update-medical-test.dto';
 
 @Injectable()
 export class MedicalTestService {
-  create(createMedicalTestDto: CreateMedicalTestDto) {
-    return 'This action adds a new medicalTest';
-  }
+  constructor(
+    @InjectModel(MedicalTest)
+    private readonly testModel: typeof MedicalTest,
 
-  findAll() {
-    return `This action returns all medicalTest`;
-  }
+    @InjectModel(Donation)
+    private readonly donationModel: typeof Donation,
 
-  findOne(id: number) {
-    return `This action returns a #${id} medicalTest`;
-  }
+    @InjectModel(BloodUnit)
+    private readonly bloodUnitModel: typeof BloodUnit,
+  ) {}
 
-  update(id: number, updateMedicalTestDto: UpdateMedicalTestDto) {
-    return `This action updates a #${id} medicalTest`;
-  }
+  async runTests(dto: CreateMedicalTestDto) {
+    const donation = await this.donationModel.findByPk(dto.donationId);
 
-  remove(id: number) {
-    return `This action removes a #${id} medicalTest`;
+    if (!donation) {
+      throw new NotFoundException('Donation not found');
+    }
+
+    const test = await this.testModel.create({ ...dto });
+
+    // Determine next status for donation + units
+    let newDonationStatus: DonationStatus;
+    let newUnitStatus: UnitStatus;
+
+    if (dto.result === TestResult.PASSED) {
+      newDonationStatus = 'tested';
+      newUnitStatus = UnitStatus.PASSED;
+    } else {
+      newDonationStatus = 'discarded';
+      newUnitStatus = UnitStatus.FAILED;
+    }
+
+    // Update donation status
+    donation.status = newDonationStatus;
+    await donation.save();
+
+    // Update blood units from this donation
+    await this.bloodUnitModel.update(
+      { status: newUnitStatus },
+      { where: { donationId: donation.id } },
+    );
+
+    return {
+      test,
+      donation,
+      bloodUnitsUpdated: newUnitStatus,
+    };
   }
 }

@@ -1,34 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { MedicalTestService } from './medical-test.service';
 import { CreateMedicalTestDto } from './dto/create-medical-test.dto';
-import { UpdateMedicalTestDto } from './dto/update-medical-test.dto';
 
-@Controller('medical-test')
+@Controller('medical-tests')
 export class MedicalTestController {
-  constructor(private readonly medicalTestService: MedicalTestService) {}
+  constructor(private readonly service: MedicalTestService) {}
 
   @Post()
-  create(@Body() createMedicalTestDto: CreateMedicalTestDto) {
-    return this.medicalTestService.create(createMedicalTestDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.medicalTestService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.medicalTestService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMedicalTestDto: UpdateMedicalTestDto) {
-    return this.medicalTestService.update(+id, updateMedicalTestDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.medicalTestService.remove(+id);
+  conductTest(@Body() dto: CreateMedicalTestDto) {
+    return this.service.runTests(dto);
   }
 }
