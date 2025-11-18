@@ -9,6 +9,7 @@ import {
 import { CustomModel } from 'src/custom-model/custom-model';
 import { Donation } from 'src/donation/donation.model';
 import { MedicalTest } from 'src/medical-test/medical-test.model';
+import { Hospital } from 'src/user/hopsital.model';
 
 export enum UnitStatus {
   PENDING = 'pending',
@@ -27,6 +28,13 @@ export class BloodUnit extends CustomModel {
     allowNull: false,
   })
   declare donationId: number;
+
+  @ForeignKey(() => Hospital)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  declare hospitalId: number;
 
   @Column({
     type: DataType.STRING,
@@ -49,6 +57,9 @@ export class BloodUnit extends CustomModel {
 
   @BelongsTo(() => Donation)
   declare donation: Donation;
+
+  @BelongsTo(() => Hospital)
+  declare hospital: Hospital;
 
   @HasOne(() => MedicalTest)
   declare medicalTest: MedicalTest;

@@ -19,15 +19,7 @@ export class StockService {
   // All units belonging to a given hospital
   async getHospitalStock(hospitalId: number) {
     return this.bloodUnitModel.findAll({
-      include: [
-        {
-          model: Donation,
-          where: { hospitalId },
-        },
-        {
-          model: MedicalTest,
-        },
-      ],
+      where: { hospitalId },
       order: [['createdAt', 'DESC']],
     });
   }
@@ -35,16 +27,7 @@ export class StockService {
   // Filter by blood type
   async getByType(hospitalId: number, bloodType: string) {
     return this.bloodUnitModel.findAll({
-      where: { bloodType },
-      include: [
-        {
-          model: Donation,
-          where: { hospitalId },
-        },
-        {
-          model: MedicalTest,
-        },
-      ],
+      where: { bloodType, hospitalId },
     });
   }
 
@@ -55,16 +38,7 @@ export class StockService {
     }
 
     return this.bloodUnitModel.findAll({
-      where: { status },
-      include: [
-        {
-          model: Donation,
-          where: { hospitalId },
-        },
-        {
-          model: MedicalTest,
-        },
-      ],
+      where: { status, hospitalId },
     });
   }
 
@@ -81,13 +55,7 @@ export class StockService {
   // get stock statistics
   async getBloodTypeStatistics(hospitalId: number) {
     const units = await this.bloodUnitModel.findAll({
-      include: [
-        {
-          model: Donation,
-          where: { hospitalId },
-          attributes: [],
-        },
-      ],
+      where: { hospitalId },
       attributes: [
         'bloodType',
         [fn('COUNT', col('BloodUnit.id')), 'total'],

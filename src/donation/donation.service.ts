@@ -26,6 +26,7 @@ export class DonationService {
     await this.bloodUnitService.create({
       bloodType: donation.bloodType,
       donationId: donation.id,
+      hospitalId: createDonationDto.hospitalId,
       collectedAt: Date.now().toString(),
       status: UnitStatus.PENDING,
     });
