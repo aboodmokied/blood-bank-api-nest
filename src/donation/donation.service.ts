@@ -77,7 +77,6 @@ export class DonationService {
 
     const allowedStatuses: DonationStatus[] = [
       'collected',
-      'tested',
       'stored',
       'discarded',
     ];

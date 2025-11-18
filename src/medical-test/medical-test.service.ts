@@ -32,7 +32,7 @@ export class MedicalTestService {
     let newUnitStatus: UnitStatus;
 
     if (dto.result === TestResult.PASSED) {
-      newDonationStatus = 'tested';
+      newDonationStatus = 'stored';
       newUnitStatus = UnitStatus.PASSED;
     } else {
       newDonationStatus = 'discarded';

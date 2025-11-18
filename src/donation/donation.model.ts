@@ -5,7 +5,7 @@ import { Hospital } from 'src/user/hopsital.model';
 import { Appointment } from 'src/appointment/appointment.model';
 import { Doctor } from 'src/user/doctor.model';
 
-export type DonationStatus = 'collected' | 'tested' | 'stored' | 'discarded';
+export type DonationStatus = 'collected' | 'stored' | 'discarded';
 
 @Table
 export class Donation extends CustomModel {

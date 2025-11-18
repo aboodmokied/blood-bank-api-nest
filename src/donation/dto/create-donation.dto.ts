@@ -34,7 +34,7 @@ export class CreateDonationDto {
   volume: number; // ml
 
   @IsString()
-  @IsIn(['collected', 'tested', 'stored', 'discarded'])
+  @IsIn(['collected', 'stored', 'discarded'])
   @IsOptional()
   status?: 'collected' | 'tested' | 'stored' | 'discarded';
 }
