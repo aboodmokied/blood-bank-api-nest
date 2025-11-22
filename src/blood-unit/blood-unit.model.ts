@@ -61,6 +61,6 @@ export class BloodUnit extends CustomModel {
   @BelongsTo(() => Hospital)
   declare hospital: Hospital;
 
-  @HasOne(() => MedicalTest)
-  declare medicalTest: MedicalTest;
+  // @HasOne(() => MedicalTest)
+  // declare medicalTest: MedicalTest;
 }

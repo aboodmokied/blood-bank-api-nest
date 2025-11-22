@@ -15,6 +15,7 @@ import { DonationModule } from './donation/donation.module';
 import { BloodUnitModule } from './blood-unit/blood-unit.module';
 import { MedicalTestModule } from './medical-test/medical-test.module';
 import { StockModule } from './stock/stock.module';
+import { AlertModule } from './alert/alert.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { StockModule } from './stock/stock.module';
     BloodUnitModule,
     MedicalTestModule,
     StockModule,
+    AlertModule,
   ],
   controllers: [AppController],
   providers: [AppService],
