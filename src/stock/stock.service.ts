@@ -89,6 +89,35 @@ export class StockService {
 
     return result;
   }
+
+  // get blood type counts only
+  async getBloodTypeCounts(hospitalId: number) {
+    const defaultTypes = {
+      'A+': 0,
+      'A-': 0,
+      'B+': 0,
+      'B-': 0,
+      'AB+': 0,
+      'AB-': 0,
+      'O+': 0,
+      'O-': 0,
+    };
+    const units = await this.bloodUnitModel.findAll({
+      where: { hospitalId },
+      attributes: ['bloodType', [fn('COUNT', col('BloodUnit.id')), 'total']],
+      group: ['bloodType'],
+      raw: true,
+    });
+
+    // Convert array → object format
+    const result = { ...defaultTypes };
+    for (const u of units as any) {
+      result[u.bloodType] = Number(u.total);
+    }
+
+    return result;
+  }
+
   // Update status (PASSED, FAILED, PENDING)
   //   async updateUnitStatus(id: number, status: UnitStatus) {
   //     if (!Object.values(UnitStatus).includes(status)) {

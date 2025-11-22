@@ -8,5 +8,6 @@ import { BloodUnit } from 'src/blood-unit/blood-unit.model';
   imports: [SequelizeModule.forFeature([BloodUnit])],
   controllers: [StockController],
   providers: [StockService],
+  exports: [StockService],
 })
 export class StockModule {}

@@ -1,41 +1,39 @@
 import { Injectable } from '@nestjs/common';
+import { StockService } from 'src/stock/stock.service';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AlertService {
-  constructor() // private bloodUnitRepo: BloodUnitRepository,
-  // private thresholdRepo: ThresholdRepository,
-  // private alertRepo: AlertRepository,
-  // private notificationService: NotificationService
-  {}
+  constructor(
+    private stockService: StockService,
+    private userService: UserService,
+  ) {}
 
   async checkAllHospitalsStock() {
-    // const hospitals = await Hospital.findAll();
-    // for (const hospital of hospitals) {
-    //   await this.checkHospitalStock(hospital.id);
-    // }
+    const hospitals = await this.userService.findAllHospitals();
+
+    for (const hospital of hospitals) {
+      await this.checkHospitalStock(hospital.id);
+    }
   }
 
   async checkHospitalStock(hospitalId: number) {
-    // const thresholds = await this.thresholdRepo.findByHospital(hospitalId);
-    // for (const item of thresholds) {
-    //   const { blood_type, min_units } = item;
-    //   const currentUnits = await this.bloodUnitRepo.countAvailableByType(
-    //     hospitalId,
-    //     blood_type,
-    //   );
-    //   if (currentUnits < min_units) {
-    //     await this.createAlert(
-    //       hospitalId,
-    //       blood_type,
-    //       currentUnits,
-    //       min_units,
-    //     );
-    //   }
-    // }
+    const unitsCounts = await this.stockService.getBloodTypeCounts(hospitalId);
+    for (let unitName in unitsCounts) {
+      const unitCount = unitsCounts[unitName];
+      if (unitCount < 10) {
+        await this.createAlert(hospitalId, unitName, unitCount);
+      }
+    }
   }
 
-  async createAlert(hospitalId, bloodType, currentUnits, threshold) {
-    // avoid duplicated alerts
+  async createAlert(hospitalId, bloodType, currentUnits) {
+    //TODO: avoid duplicated alerts
+    console.log('Alert', {
+      hospitalId,
+      bloodType,
+      currentUnits,
+    });
     //     const existing = await Alert.findOne({
     //       where: {
     //         hospital_id: hospitalId,

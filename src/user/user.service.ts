@@ -52,7 +52,9 @@ export class UserService {
     this.profileService.initProfile(user.id, user.role);
     return { user };
   }
-
+  async findAllHospitals() {
+    return this.hospitalModel.findAll();
+  }
   async findAllByRole(role: Role, page = 1, limit = 10, search?: string) {
     const model = this.getModel(role);
     let resule: { data: any; pagination: any } = {
