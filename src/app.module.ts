@@ -16,6 +16,7 @@ import { BloodUnitModule } from './blood-unit/blood-unit.module';
 import { MedicalTestModule } from './medical-test/medical-test.module';
 import { StockModule } from './stock/stock.module';
 import { AlertModule } from './alert/alert.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { AlertModule } from './alert/alert.module';
     MedicalTestModule,
     StockModule,
     AlertModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
