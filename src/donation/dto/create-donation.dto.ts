@@ -18,6 +18,10 @@ export class CreateDonationDto {
   hospitalId: number;
 
   @IsInt()
+  @IsNotEmpty()
+  doctorId: number;
+
+  @IsInt()
   @IsOptional()
   appointmentId?: number;
 

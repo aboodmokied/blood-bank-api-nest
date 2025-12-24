@@ -20,7 +20,7 @@ import { Admin } from 'src/user/admin.model';
 import { Donor } from 'src/user/donor.model';
 import { Doctor } from 'src/user/doctor.model';
 import { ForgetPassword } from 'src/user/forgetPassword.model';
-import { MailerService } from '@nestjs-modules/mailer';
+// import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -34,7 +34,7 @@ export class AuthService {
     @InjectModel(ForgetPassword)
     private forgetPasswordModel: typeof ForgetPassword,
     private jwtService: JwtService,
-    private mailService: MailerService,
+    // private mailService: MailerService,
     private configService: ConfigService,
   ) {}
   async isValidTokenWithUser(token: string) {

@@ -23,16 +23,16 @@ import { NotificationModule } from './notification/notification.module';
     ConfigModule.forRoot({
       isGlobal: true, // Makes ConfigService available app-wide
     }),
-    MailerModule.forRoot({
-      transport: {
-        service: process.env.EMAIL_SERVICE,
-        secure: true, // true for 465, false for other ports
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASSWORD,
-        },
-      },
-    }),
+    // MailerModule.forRoot({
+    //   transport: {
+    //     service: process.env.EMAIL_SERVICE,
+    //     secure: true, // true for 465, false for other ports
+    //     auth: {
+    //       user: process.env.EMAIL_USER,
+    //       pass: process.env.EMAIL_PASSWORD,
+    //     },
+    //   },
+    // }),
     // SequelizeModule.forRootAsync({
     //   imports: [ConfigModule],
     //   useFactory: (configService: ConfigService) => ({

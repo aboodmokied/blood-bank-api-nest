@@ -1,18 +1,19 @@
 import { Table, Column, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import { CustomModel } from 'src/custom-model/custom-model';
-import { User } from 'src/user/user.model';
+import { Hospital } from 'src/user/hopsital.model';
+// import { User } from 'src/user/user.model';
 
 @Table
 export class Alert extends CustomModel {
-  @ForeignKey(() => User)
+  @ForeignKey(() => Hospital)
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
   hospital_id: number;
 
-  @BelongsTo(() => User)
-  hospital: User;
+  @BelongsTo(() => Hospital)
+  hospital: Hospital;
 
   @Column({
     type: DataType.STRING,
