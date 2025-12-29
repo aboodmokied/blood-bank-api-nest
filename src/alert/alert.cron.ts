@@ -11,10 +11,10 @@ export class AlertCron {
   // Run every hour
   //   @Cron('0 * * * *')
   // Run every 10 sec
-  @Cron('*/10 * * * * *')
-  async handleCron() {
-    this.logger.log('Checking blood stock levels...');
-    console.log('hello from cron');
-    await this.alertService.checkAllHospitalsStock();
-  }
+  // @Cron('*/10 * * * * *')
+  // async handleCron() {
+  //   this.logger.log('Checking blood stock levels...');
+  //   console.log('hello from cron');
+  //   await this.alertService.checkAllHospitalsStock();
+  // }
 }
