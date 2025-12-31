@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { col, fn } from 'sequelize';
+import { col, fn, literal } from 'sequelize';
 import { BloodUnit, UnitStatus } from 'src/blood-unit/blood-unit.model';
 import { Donation } from 'src/donation/donation.model';
 import { MedicalTest } from 'src/medical-test/medical-test.model';
@@ -60,15 +60,15 @@ export class StockService {
         'bloodType',
         [fn('COUNT', col('BloodUnit.id')), 'total'],
         [
-          fn('SUM', fn("CASE WHEN status = 'passed' THEN 1 ELSE 0 END")),
+          fn('SUM', literal("CASE WHEN status = 'passed' THEN 1 ELSE 0 END")),
           'passed',
         ],
         [
-          fn('SUM', fn("CASE WHEN status = 'pending' THEN 1 ELSE 0 END")),
+          fn('SUM', literal("CASE WHEN status = 'pending' THEN 1 ELSE 0 END")),
           'pending',
         ],
         [
-          fn('SUM', fn("CASE WHEN status = 'failed' THEN 1 ELSE 0 END")),
+          fn('SUM', literal("CASE WHEN status = 'failed' THEN 1 ELSE 0 END")),
           'failed',
         ],
       ],

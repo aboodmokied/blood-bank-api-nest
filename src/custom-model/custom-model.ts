@@ -17,7 +17,6 @@ export class CustomModel extends Model {
         });
 
         const totalPages = Math.ceil(count / limit);
-
         return{
             data,
             pagination: {

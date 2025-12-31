@@ -10,12 +10,15 @@ import { UpdateDonationDto } from './dto/update-donation.dto';
 import { BloodUnitService } from 'src/blood-unit/blood-unit.service';
 import { UnitStatus } from 'src/blood-unit/blood-unit.model';
 
+import { AppointmentService } from 'src/appointment/appointment.service';
+
 @Injectable()
 export class DonationService {
   constructor(
     @InjectModel(Donation)
     private donationModel: typeof Donation,
     private bloodUnitService: BloodUnitService,
+    private appointmentService: AppointmentService,
   ) {}
 
   async create(createDonationDto: CreateDonationDto) {
@@ -27,9 +30,17 @@ export class DonationService {
       bloodType: donation.bloodType,
       donationId: donation.id,
       hospitalId: createDonationDto.hospitalId,
-      collectedAt: Date.now().toString(),
+      collectedAt: new Date().toISOString(),
       status: UnitStatus.PENDING,
     });
+
+    if (createDonationDto.appointmentId) {
+      await this.appointmentService.changeStatus(
+        createDonationDto.appointmentId,
+        'completed',
+      );
+    }
+
     return { donation, message: 'donation created successfully' };
   }
 

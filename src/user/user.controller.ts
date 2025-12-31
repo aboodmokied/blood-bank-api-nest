@@ -27,6 +27,21 @@ export class UserController {
     return { user };
   }
 
+  @Get('hospitals')
+  async findAllHospitals(
+    @Query('search') search: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    const { users, pagination } = await this.userService.findAllByRole(
+      'hospital',
+      +page,
+      +limit,
+      search,
+    );
+    return { users, pagination };
+  }
+
   // TODO: add role authorization
   @Get(':role')
   async finaAll(
