@@ -25,8 +25,12 @@ export class DonationController {
 
   // Get all donations with pagination
   @Get()
-  async findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
-    return this.donationService.findAll(Number(page), Number(limit));
+  async findAll(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query('status') status?: DonationStatus,
+  ) {
+    return this.donationService.findAll(Number(page), Number(limit), status);
   }
 
   // Get donation by id

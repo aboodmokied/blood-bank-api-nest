@@ -19,14 +19,17 @@ export class MedicalTest extends CustomModel {
   @Column({ type: DataType.INTEGER, allowNull: false })
   declare donationId: number;
 
-  @Column({ type: DataType.STRING, allowNull: false })
-  declare hiv: string;
+  @Column({ type: DataType.BOOLEAN, allowNull: false })
+  declare hiv: boolean;
 
-  @Column({ type: DataType.STRING, allowNull: false })
-  declare hepatitis: string;
+  @Column({ type: DataType.BOOLEAN, allowNull: false })
+  declare hepatitis: boolean;
 
-  @Column({ type: DataType.STRING, allowNull: false })
-  declare malaria: string;
+  @Column({ type: DataType.BOOLEAN, allowNull: false })
+  declare malaria: boolean;
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  declare notes: string;
 
   @Column({
     type: DataType.ENUM(...Object.values(TestResult)),

@@ -44,9 +44,13 @@ export class DonationService {
     return { donation, message: 'donation created successfully' };
   }
 
-  async findAll(page = 1, limit = 10) {
+  async findAll(page = 1, limit = 10, status?: DonationStatus) {
+    const where: any = {};
+    if (status) {
+      where.status = status;
+    }
     const { data: donations, pagination } =
-      await this.donationModel.findWithPagination(page, limit);
+      await this.donationModel.findWithPagination(page, limit, { where });
     return { donations, pagination };
   }
 
