@@ -26,4 +26,16 @@ export class NotificationService {
     //   `,
     // });
   }
+
+  async sendMedicalTestResult(email: string, result: 'PASSED' | 'FAILED', conditions?: string[]) {
+    this.logger.log(`Sending medical test result (${result}) to ${email}`);
+    
+    // In a real app:
+    // const subject = result === 'PASSED' ? 'Medical Test Passed' : 'Important: Medical Test Results';
+    // const text = result === 'PASSED' 
+    //   ? 'Your blood donation medical tests passed. Thank you for saving lives!'
+    //   : `Your medical tests indicated some issues: ${conditions?.join(', ')}. Please consult a doctor.`;
+    
+    // await this.mailerService.sendMail({ to: email, subject, text });
+  }
 }

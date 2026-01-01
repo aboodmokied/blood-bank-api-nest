@@ -56,11 +56,11 @@ export class MedicalHistoryService {
   }
 
   async getMedicalHistoriesByDonorId(donorId: number) {
-    const medicalHistory = await this.medicalHistoryModel.findAll({
+    const medicalHistories = await this.medicalHistoryModel.findAll({
       where: { donorId },
       include: [{ model: Donor, attributes: ['id', 'name', 'email'] }],
     });
 
-    return { medicalHistory };
+    return { medicalHistories };
   }
 }
