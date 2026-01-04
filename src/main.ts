@@ -33,3 +33,4 @@ bootstrap();
 // TODO:
 // The blood type of the donor
 // the failer blood units on the stock
+// donor elligability

@@ -42,6 +42,11 @@ export class UserController {
     return { users, pagination };
   }
 
+  @Get('hospitals/:id')
+  async getHospitalById(@Param('id') id: string) {
+    return this.userService.findHospitalById(+id);
+  }
+
   // TODO: add role authorization
   @Get(':role')
   async finaAll(

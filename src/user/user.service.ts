@@ -55,6 +55,10 @@ export class UserService {
   async findAllHospitals() {
     return this.hospitalModel.findAll();
   }
+  async findHospitalById(id: number) {
+    return this.hospitalModel.findByPk(id);
+  }
+
   async findAllByRole(role: Role, page = 1, limit = 10, search?: string) {
     const model = this.getModel(role);
     let resule: { data: any; pagination: any } = {
