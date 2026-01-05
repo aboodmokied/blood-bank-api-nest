@@ -11,12 +11,15 @@ import { BloodUnitService } from 'src/blood-unit/blood-unit.service';
 import { UnitStatus } from 'src/blood-unit/blood-unit.model';
 
 import { AppointmentService } from 'src/appointment/appointment.service';
+import { Donor } from 'src/user/donor.model';
 
 @Injectable()
 export class DonationService {
   constructor(
     @InjectModel(Donation)
     private donationModel: typeof Donation,
+    @InjectModel(Donor)
+    private donorModel: typeof Donor,
     private bloodUnitService: BloodUnitService,
     private appointmentService: AppointmentService,
   ) {}
@@ -33,6 +36,12 @@ export class DonationService {
       collectedAt: new Date().toISOString(),
       status: UnitStatus.PENDING,
     });
+
+    // Update donor's last donation date
+    await this.donorModel.update(
+      { lastDonationDate: donation.donationDate },
+      { where: { id: donation.donorId } }
+    );
 
     if (createDonationDto.appointmentId) {
       await this.appointmentService.changeStatus(

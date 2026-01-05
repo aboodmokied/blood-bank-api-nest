@@ -40,6 +40,19 @@ export class Donor extends CustomModel {
   @HasMany(() => Donation)
   declare donations?: Donation[];
 
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  declare lastDonationDate?: Date;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: true,
+  })
+  declare isEligible: boolean;
+
   @Column({ defaultValue: 'donor' })
   declare role: Role;
 }

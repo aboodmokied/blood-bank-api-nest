@@ -20,6 +20,9 @@ export class MedicalTestService {
     @InjectModel(BloodUnit)
     private readonly bloodUnitModel: typeof BloodUnit,
 
+    @InjectModel(Donor)
+    private readonly donorModel: typeof Donor,
+
     private readonly medicalHistoryService: MedicalHistoryService,
     private readonly notificationService: NotificationService,
   ) {}
@@ -83,7 +86,13 @@ export class MedicalTestService {
           });
       }
 
-      // 2. Notify Donor
+      // 2. Mark Donor as Ineligible
+      await this.donorModel.update(
+        { isEligible: false },
+        { where: { id: donation.donorId } }
+      );
+
+      // 3. Notify Donor
       if (donation.donor?.email) {
         await this.notificationService.sendMedicalTestResult(donation.donor.email, 'FAILED', conditions);
       }

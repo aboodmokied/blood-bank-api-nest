@@ -64,61 +64,29 @@ export class BroadcastController {
       throw new BadRequestException('Hospital not found');
     }
 
-    // 1. Find donors with matching bloodType
-    // 2. Filter valid donors (eligible: last donation > 4 months ago OR no donations)
-    
-    // Simplification: Find all donors with bloodType. 
-    // Ideally we check eligibility. 
-    // To check eligibility efficiently, we can use a subquery or join, but for now let's fetch matching donors and check in code or assume all registered donors with that blood type should be notified (maybe they haven't donated recently).
-    
-    // Let's implement a better check:
-    // Donors with bloodType AND (latestDonationDate < 4 months ago OR no donation)
-    
+    // 1. Find eligible donors with matching bloodType
+    const fourMonthsAgo = new Date();
+    fourMonthsAgo.setMonth(fourMonthsAgo.getMonth() - 4);
+
     const donors = await this.donorModel.findAll({
       where: {
         bloodType: bloodType,
+        isEligible: true,
+        [Op.or]: [
+          { lastDonationDate: null },
+          { lastDonationDate: { [Op.lt]: fourMonthsAgo } },
+        ],
       },
-      include: [
-        {
-          model: Donation,
-          limit: 1,
-          order: [['donationDate', 'DESC']],
-          required: false,
-        }
-      ] as any
     });
-
-    const eligibleDonors = donors.filter(donor => {
-      // If no donations, they are eligible
-      // Since it's a HasMany, we can't easily get single 'latestDonation' without separate query or careful include.
-      // Actually sequelize `HasOne` association alias might help or just checking the array.
-      // But `hasMany` `medicalHistory` is defined, `donations` relation might need `HasMany` in Donor model.
-      
-        // Assuming we fix Donor model to have HasMany Donations
-        // For now, let's assume we notify ALL matching donors for simplicity, or we check their last donation via query.
-        return true; 
-    });
-    
-    // Refined logic: check last donation date
-     const fourMonthsAgo = new Date();
-     fourMonthsAgo.setMonth(fourMonthsAgo.getMonth() - 4);
 
     let count = 0;
     for (const donor of donors) {
-        // Query last donation for this donor
-        const lastDonation = await this.donationModel.findOne({
-            where: { donorId: donor.id },
-            order: [['donationDate', 'DESC']],
-        });
-
-        if (!lastDonation || new Date(lastDonation.donationDate) < fourMonthsAgo) {
-             await this.notificationService.sendUrgentBloodNeed(
-                donor.email,
-                bloodType,
-                hospital.name,
-              );
-              count++;
-        }
+      await this.notificationService.sendUrgentBloodNeed(
+        donor.email,
+        bloodType,
+        hospital.name,
+      );
+      count++;
     }
 
     // Save broadcast to database

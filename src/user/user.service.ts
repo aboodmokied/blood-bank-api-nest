@@ -88,7 +88,7 @@ export class UserService {
     | typeof this.adminModel
     | typeof this.donorModel
     | typeof this.hospitalModel {
-    let model = this.donorModel;
+    let model: any;
     switch (role) {
       case 'donor':
         model = this.donorModel;
