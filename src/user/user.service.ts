@@ -37,7 +37,7 @@ export class UserService {
   }
 
   async registerUser(registerUserDto: RegisterUserDto) {
-    const { name, email, password, role } = registerUserDto;
+    const { name, email, password, role, bloodType } = registerUserDto;
     const model = this.getModel(role);
     const existingUser = await model.findOne({ where: { email } });
     if (existingUser) {
@@ -48,8 +48,9 @@ export class UserService {
       email,
       password: bcrypt.hashSync(password, 12),
       role,
+      bloodType,
     });
-    this.profileService.initProfile(user.id, user.role);
+    this.profileService.initProfile(user.id, user.role, bloodType);
     return { user };
   }
   async findAllHospitals() {
@@ -57,6 +58,9 @@ export class UserService {
   }
   async findHospitalById(id: number) {
     return this.hospitalModel.findByPk(id);
+  }
+  async findDonorById(id: number) {
+    return this.donorModel.findByPk(id);
   }
 
   async findAllByRole(role: Role, page = 1, limit = 10, search?: string) {
@@ -85,7 +89,6 @@ export class UserService {
   ):
     | typeof this.adminModel
     | typeof this.doctorModel
-    | typeof this.adminModel
     | typeof this.donorModel
     | typeof this.hospitalModel {
     let model: any;

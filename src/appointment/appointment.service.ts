@@ -47,6 +47,7 @@ export class AppointmentService {
         [Op.gte]: start,
         [Op.lt]: end,
       },
+      status: 'pending',
     };
 
     const include: any[] = [];
@@ -167,10 +168,8 @@ export class AppointmentService {
 
     const allowedStatuses: AppointmentStatus[] = [
       'pending',
-      'confirmed',
       'cancelled',
       'completed',
-      'missed',
     ];
 
     if (!allowedStatuses.includes(newStatus)) {
@@ -189,7 +188,7 @@ export class AppointmentService {
       throw new NotFoundException('Appointment not found');
     }
 
-    const allowedStatuses = ['pending', 'confirmed'];
+    const allowedStatuses = ['pending'];
 
     if (!allowedStatuses.includes(appointment.status)) {
       throw new BadRequestException('Invalid status');

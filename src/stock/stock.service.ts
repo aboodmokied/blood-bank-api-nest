@@ -58,7 +58,10 @@ export class StockService {
       where: { hospitalId },
       attributes: [
         'bloodType',
-        [fn('COUNT', col('BloodUnit.id')), 'total'],
+        [
+          fn('SUM', literal("CASE WHEN status = 'passed' THEN 1 ELSE 0 END")),
+          'total',
+        ],
         [
           fn('SUM', literal("CASE WHEN status = 'passed' THEN 1 ELSE 0 END")),
           'passed',
@@ -103,7 +106,7 @@ export class StockService {
       'O-': 0,
     };
     const units = await this.bloodUnitModel.findAll({
-      where: { hospitalId },
+      where: { hospitalId, status: 'passed' },
       attributes: ['bloodType', [fn('COUNT', col('BloodUnit.id')), 'total']],
       group: ['bloodType'],
       raw: true,

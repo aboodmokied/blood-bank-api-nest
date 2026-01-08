@@ -20,6 +20,7 @@ import { NotificationModule } from './notification/notification.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BroadcastModule } from './broadcast/broadcast.module';
 import { SchedulerModule } from './scheduler/scheduler.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { SchedulerModule } from './scheduler/scheduler.module';
     NotificationModule,
     ScheduleModule.forRoot(),
     BroadcastModule,
+    DashboardModule,
     SchedulerModule,
   ],
   controllers: [AppController],

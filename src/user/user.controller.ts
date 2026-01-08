@@ -47,6 +47,11 @@ export class UserController {
     return this.userService.findHospitalById(+id);
   }
 
+  @Get('donors/:id')
+  async getDonorById(@Param('id') id: string) {
+    return this.userService.findDonorById(+id);
+  }
+
   // TODO: add role authorization
   @Get(':role')
   async finaAll(

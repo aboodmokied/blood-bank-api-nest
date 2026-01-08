@@ -34,7 +34,7 @@ export class CreateDonationDto {
   bloodType: string; // e.g., "A+", "O-"
 
   @IsInt()
-  @Min(1)
+  @Min(0)
   volume: number; // ml
 
   @IsString()

@@ -35,6 +35,7 @@ export class DonationService {
       hospitalId: createDonationDto.hospitalId,
       collectedAt: new Date().toISOString(),
       status: UnitStatus.PENDING,
+      volume: createDonationDto.volume,
     });
 
     // Update donor's last donation date

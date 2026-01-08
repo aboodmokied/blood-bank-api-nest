@@ -27,6 +27,10 @@ export class CreateProfileDto {
   location?: string;
 
   @IsOptional()
+  @IsString()
+  bloodType?: string;
+
+  @IsOptional()
   @IsDateString()
   birthdate: string;
 

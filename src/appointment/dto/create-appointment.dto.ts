@@ -21,7 +21,7 @@ export class CreateAppointmentDto {
   date: string; // e.g., "2025-09-01T10:00:00Z"
 
   @IsString()
-  @IsIn(['pending', 'confirmed', 'cancelled', 'completed', 'missed'])
+  @IsIn(['pending', 'cancelled', 'completed'])
   // @IsNotEmpty()
   status: AppointmentStatus;
 }

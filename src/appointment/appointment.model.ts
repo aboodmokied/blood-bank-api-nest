@@ -5,10 +5,8 @@ import { Hospital } from 'src/user/hopsital.model';
 
 export type AppointmentStatus =
   | 'pending'
-  | 'confirmed'
   | 'cancelled'
-  | 'completed'
-  | 'missed';
+  | 'completed';
 
 @Table
 export class Appointment extends CustomModel {
@@ -30,14 +28,9 @@ export class Appointment extends CustomModel {
   declare date: string;
 
   @Column({
-    type: DataType.ENUM(
-      'pending',
-      'confirmed',
-      'cancelled',
-      'completed',
-      'missed',
-    ),
+    type: DataType.ENUM('pending', 'cancelled', 'completed'),
     allowNull: false,
+    defaultValue: 'pending',
   })
   declare status: AppointmentStatus;
 }
