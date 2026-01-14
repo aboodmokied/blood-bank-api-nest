@@ -1,4 +1,4 @@
-import { IsString, MinLength, IsEmail, MaxLength, IsNotEmpty, IsEnum } from "class-validator";
+import { IsString, MinLength, IsEmail, MaxLength, IsNotEmpty, IsEnum, IsOptional } from "class-validator";
 import { NotEmpty } from "sequelize-typescript";
 import { Role } from "src/types/auth.types";
 
@@ -19,6 +19,10 @@ export class RegisterUserDto {
     @IsNotEmpty({message : "User Role required"})
     @IsString()
     role:Role
+
+    @IsOptional()
+    @IsString()
+    bloodType?: string;
 }
 
 export class ValidateUserDto {

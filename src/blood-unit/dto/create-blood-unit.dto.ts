@@ -10,4 +10,6 @@ export class CreateBloodUnitDto {
   status?: UnitStatus;
 
   collectedAt?: string;
+
+  volume?: number;
 }

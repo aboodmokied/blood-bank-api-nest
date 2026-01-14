@@ -57,8 +57,8 @@ export class MedicalHistoryController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async getMedicalHistoriesByDonorId(@Param('id') donorId: string) {
-    const { medicalHistory } =
+    const { medicalHistories } =
       await this.medicalHistoryService.getMedicalHistoriesByDonorId(+donorId);
-    return { medicalHistory };
+    return { medicalHistories };
   }
 }

@@ -8,6 +8,7 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Appointment, AppointmentStatus } from './appointment.model';
 import { Op } from 'sequelize';
+import { Donor } from 'src/user/donor.model';
 
 @Injectable()
 export class AppointmentService {
@@ -36,21 +37,63 @@ export class AppointmentService {
     return { appointment };
   }
 
-  async findByDay(day: string, page = 1, limit = 10) {
+  async findByDay(day: string, page = 1, limit = 10, search?: string) {
     const start = new Date(day);
     const end = new Date(start);
     end.setDate(start.getDate() + 1);
 
-    const { data: appointments, pagination } =
-      await this.appointmentModel.findWithPagination(page, limit, {
+    const where: any = {
+      date: {
+        [Op.gte]: start,
+        [Op.lt]: end,
+      },
+      status: 'pending',
+    };
+
+    const include: any[] = [];
+    if (search) {
+      include.push({
+        model: Donor,
         where: {
-          date: {
-            [Op.gte]: start,
-            [Op.lt]: end,
+          name: {
+            [Op.like]: `%${search}%`,
           },
         },
       });
+    } else {
+       // Also include Donor just for display if needed, but the search requires the where clause
+       // If we want to show donor name in the table, we should probably always include it.
+       // However, `findWithPagination` might not support complex includes if not handled carefully.
+       // Let's assume we can include it.
+       include.push({ model: Donor });
+    }
 
+    if (search) {
+         // If searching, we skip the generic findWithPagination if it doesn't support complex includes well,
+         // or we use findAndCountAll like findByHospital.
+         // Let's use findAndCountAll to be consistent and safe.
+         const { count, rows } = await this.appointmentModel.findAndCountAll({
+             where,
+             include,
+             limit,
+             offset: (page - 1) * limit,
+             order: [['date', 'DESC']],
+         });
+         return {
+            appointments: rows,
+            pagination: {
+                total: count,
+                page,
+                limit,
+                totalPages: Math.ceil(count / limit),
+            }
+         }
+    }
+    const { data: appointments, pagination } =
+      await this.appointmentModel.findWithPagination(page, limit, {
+        where,
+        include:[{model:Donor}]
+      });
     return { appointments, pagination };
   }
 
@@ -65,18 +108,34 @@ export class AppointmentService {
 
   async findByHospital(id: number, page = 1, limit = 10, search?: string) {
     if (search) {
-      const { data: appointments, pagination } =
-        await this.appointmentModel.findWithPaginationAndSearch(
+      const { count, rows } = await this.appointmentModel.findAndCountAll({
+        where: {
+          hospitalId: id,
+        },
+        include: [
+          {
+            model: Donor,
+            where: {
+              name: {
+                [Op.like]: `%${search}%`,
+              },
+            },
+          },
+        ],
+        limit,
+        offset: (page - 1) * limit,
+        order: [['date', 'DESC']],
+      });
+
+      return {
+        appointments: rows,
+        pagination: {
+          total: count,
           page,
           limit,
-          {
-            where: { hospitalId: id },
-          },
-          search,
-          ['date', 'donorId'],
-        );
-
-      return { appointments, pagination };
+          totalPages: Math.ceil(count / limit),
+        },
+      };
     } else {
       const { data: appointments, pagination } =
         await this.appointmentModel.findWithPagination(page, limit, {
@@ -109,10 +168,8 @@ export class AppointmentService {
 
     const allowedStatuses: AppointmentStatus[] = [
       'pending',
-      'confirmed',
       'cancelled',
       'completed',
-      'missed',
     ];
 
     if (!allowedStatuses.includes(newStatus)) {
@@ -131,7 +188,7 @@ export class AppointmentService {
       throw new NotFoundException('Appointment not found');
     }
 
-    const allowedStatuses = ['pending', 'confirmed'];
+    const allowedStatuses = ['pending'];
 
     if (!allowedStatuses.includes(appointment.status)) {
       throw new BadRequestException('Invalid status');

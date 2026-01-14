@@ -43,6 +43,13 @@ export class BloodUnit extends CustomModel {
   declare bloodType: string;
 
   @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 450,
+  })
+  declare volume: number;
+
+  @Column({
     type: DataType.ENUM(...Object.values(UnitStatus)),
     allowNull: false,
     defaultValue: UnitStatus.PENDING,

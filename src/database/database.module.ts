@@ -18,18 +18,55 @@ import { ProfileModel } from 'src/profile/models/profile.model';
     SequelizeModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        dialect: 'mysql',
-        host: configService.get<string>('DB_HOST'),
-        port: parseInt(configService.get<string>('DB_PORT') || '3306', 10),
-        username: configService.get<string>('DB_USERNAME'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_NAME'),
-        // models: [User, Donor, Doctor , Admin, Hospital, ForgetPassword, Token , MedicalHistory , MedicalHistoryLog, ProfileModel],
-        autoLoadModels: true,
-        synchronize: true,
-        sync: { alter: false },
-      }),
+      useFactory: (configService: ConfigService) => {
+        // If DATABASE_URL is provided (e.g., from Render), use it
+        const databaseUrl = configService.get<string>('DATABASE_URL');
+        if (databaseUrl) {
+          return {
+            dialect: 'postgres',
+            url: databaseUrl,
+            dialectOptions: {
+              ssl: {
+                require: true,
+                rejectUnauthorized: false,
+              },
+            },
+            autoLoadModels: true,
+            synchronize: true,
+            sync: { alter: false },
+          };
+        }
+
+        // Otherwise, use individual connection parameters
+        const dialect = configService.get<string>('DB_DIALECT') || 'mysql';
+        const config: any = {
+          dialect: dialect,
+          host: configService.get<string>('DB_HOST'),
+          port: parseInt(
+            configService.get<string>('DB_PORT') ||
+              (dialect === 'postgres' ? '5432' : '3306'),
+            10,
+          ),
+          username: configService.get<string>('DB_USERNAME'),
+          password: configService.get<string>('DB_PASSWORD'),
+          database: configService.get<string>('DB_NAME'),
+          autoLoadModels: true,
+          synchronize: true,
+          sync: { alter: false },
+        };
+
+        // Add SSL for PostgreSQL in production
+        if (dialect === 'postgres' && configService.get<string>('NODE_ENV') === 'production') {
+          config.dialectOptions = {
+            ssl: {
+              require: true,
+              rejectUnauthorized: false,
+            },
+          };
+        }
+
+        return config;
+      },
     }),
   ],
 })

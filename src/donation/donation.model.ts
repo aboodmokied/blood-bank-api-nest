@@ -1,4 +1,4 @@
-import { Table, Column, DataType, ForeignKey } from 'sequelize-typescript';
+import { Table, Column, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import { CustomModel } from 'src/custom-model/custom-model';
 import { Donor } from 'src/user/donor.model';
 import { Hospital } from 'src/user/hopsital.model';
@@ -12,6 +12,9 @@ export class Donation extends CustomModel {
   @ForeignKey(() => Donor)
   @Column({ type: DataType.INTEGER, allowNull: false })
   declare donorId: number;
+
+  @BelongsTo(() => Donor)
+  declare donor: Donor;
 
   @ForeignKey(() => Hospital)
   @Column({ type: DataType.INTEGER, allowNull: false })

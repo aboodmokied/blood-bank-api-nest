@@ -10,12 +10,15 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Role } from 'src/types/auth.types';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { Donor } from 'src/user/donor.model';
 
 @Injectable()
 export class ProfileService {
   constructor(
     @InjectModel(ProfileModel)
     private readonly profileModel: typeof ProfileModel,
+    @InjectModel(Donor)
+    private readonly donorModel: typeof Donor,
   ) {}
 
   async createProfile(
@@ -48,7 +51,7 @@ export class ProfileService {
     return { profile };
   }
 
-  async initProfile(userId: number, role: Role) {
+  async initProfile(userId: number, role: Role, bloodType?: string) {
     const isExist = await this.profileModel.count({
       where: { role, userId },
     });
@@ -56,6 +59,7 @@ export class ProfileService {
       await this.profileModel.create({
         role,
         userId,
+        bloodType,
       });
     }
   }
@@ -76,6 +80,15 @@ export class ProfileService {
       throw new NotFoundException('profile not found');
     }
     await profile.update(updateProfileDto);
+
+    // Sync bloodType to Donor model if role is donor
+    if (profile.role === 'donor' && updateProfileDto.bloodType) {
+      await this.donorModel.update(
+        { bloodType: updateProfileDto.bloodType },
+        { where: { id: profile.userId } }
+      );
+    }
+
     return { profile };
   }
 

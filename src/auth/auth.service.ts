@@ -216,7 +216,7 @@ export class AuthService {
   }
 
   private getModel(role: string) {
-    let model = this.donorModel;
+    let model:any;
     switch (role) {
       case 'donor':
         model = this.donorModel;

@@ -10,12 +10,18 @@ import { UpdateDonationDto } from './dto/update-donation.dto';
 import { BloodUnitService } from 'src/blood-unit/blood-unit.service';
 import { UnitStatus } from 'src/blood-unit/blood-unit.model';
 
+import { AppointmentService } from 'src/appointment/appointment.service';
+import { Donor } from 'src/user/donor.model';
+
 @Injectable()
 export class DonationService {
   constructor(
     @InjectModel(Donation)
     private donationModel: typeof Donation,
+    @InjectModel(Donor)
+    private donorModel: typeof Donor,
     private bloodUnitService: BloodUnitService,
+    private appointmentService: AppointmentService,
   ) {}
 
   async create(createDonationDto: CreateDonationDto) {
@@ -27,15 +33,34 @@ export class DonationService {
       bloodType: donation.bloodType,
       donationId: donation.id,
       hospitalId: createDonationDto.hospitalId,
-      collectedAt: Date.now().toString(),
+      collectedAt: new Date().toISOString(),
       status: UnitStatus.PENDING,
+      volume: createDonationDto.volume,
     });
+
+    // Update donor's last donation date
+    await this.donorModel.update(
+      { lastDonationDate: donation.donationDate },
+      { where: { id: donation.donorId } }
+    );
+
+    if (createDonationDto.appointmentId) {
+      await this.appointmentService.changeStatus(
+        createDonationDto.appointmentId,
+        'completed',
+      );
+    }
+
     return { donation, message: 'donation created successfully' };
   }
 
-  async findAll(page = 1, limit = 10) {
+  async findAll(page = 1, limit = 10, status?: DonationStatus) {
+    const where: any = {};
+    if (status) {
+      where.status = status;
+    }
     const { data: donations, pagination } =
-      await this.donationModel.findWithPagination(page, limit);
+      await this.donationModel.findWithPagination(page, limit, { where });
     return { donations, pagination };
   }
 

@@ -27,6 +27,31 @@ export class UserController {
     return { user };
   }
 
+  @Get('hospitals')
+  async findAllHospitals(
+    @Query('search') search: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    const { users, pagination } = await this.userService.findAllByRole(
+      'hospital',
+      +page,
+      +limit,
+      search,
+    );
+    return { users, pagination };
+  }
+
+  @Get('hospitals/:id')
+  async getHospitalById(@Param('id') id: string) {
+    return this.userService.findHospitalById(+id);
+  }
+
+  @Get('donors/:id')
+  async getDonorById(@Param('id') id: string) {
+    return this.userService.findDonorById(+id);
+  }
+
   // TODO: add role authorization
   @Get(':role')
   async finaAll(

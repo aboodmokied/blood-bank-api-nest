@@ -26,4 +26,33 @@ export class NotificationService {
     //   `,
     // });
   }
+
+  async sendMedicalTestResult(email: string, result: 'PASSED' | 'FAILED', conditions?: string[]) {
+    this.logger.log(`Sending medical test result (${result}) to ${email}`);
+    
+    // In a real app:
+    // const subject = result === 'PASSED' ? 'Medical Test Passed' : 'Important: Medical Test Results';
+    // const text = result === 'PASSED' 
+    //   ? 'Your blood donation medical tests passed. Thank you for saving lives!'
+    //   : `Your medical tests indicated some issues: ${conditions?.join(', ')}. Please consult a doctor.`;
+    
+    // await this.mailerService.sendMail({ to: email, subject, text });
+  }
+  async sendEligibilityReminder(email: string) {
+    this.logger.log(`Sending eligibility reminder to ${email}`);
+    // await this.mailerService.sendMail({
+    //   to: email,
+    //   subject: 'You are eligible to donate again!',
+    //   text: 'It has been 4 months since your last donation. You can now make another donation and save lives!',
+    // });
+  }
+
+  async sendUrgentBloodNeed(email: string, bloodType: string, hospitalName: string) {
+    this.logger.log(`Sending urgent blood need alert (${bloodType}) to ${email}`);
+    // await this.mailerService.sendMail({
+    //   to: email,
+    //   subject: `URGENT: ${bloodType} Blood Needed at ${hospitalName}`,
+    //   text: `There is an urgent need for ${bloodType} blood at ${hospitalName}. Please visit us if you are able to donate.`,
+    // });
+  }
 }
