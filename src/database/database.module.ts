@@ -25,6 +25,8 @@ import { ProfileModel } from 'src/profile/models/profile.model';
         if (databaseUrl) {
           return {
             dialect: 'postgres',
+            port: parseInt(
+            configService.get<string>('DB_PORT') || '5432' ),
             url: databaseUrl,
             dialectOptions: {
               ssl: {
