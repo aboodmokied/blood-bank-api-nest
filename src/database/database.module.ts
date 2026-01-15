@@ -21,6 +21,7 @@ import { ProfileModel } from 'src/profile/models/profile.model';
       useFactory: (configService: ConfigService) => {
         // If DATABASE_URL is provided (e.g., from Render), use it
         const databaseUrl = configService.get<string>('DATABASE_URL');
+        console.log({databaseUrl})
         if (databaseUrl) {
           return {
             dialect: 'postgres',
