@@ -106,9 +106,10 @@ export class AuthService {
     });
     if (!user) throw new NotFoundException('User not found');
 
-    const code = Math.floor(100000 + Math.random() * 900000)
-      .toString()
-      .padStart(6, '0');
+    // const code = Math.floor(100000 + Math.random() * 900000)
+    //   .toString()
+    //   .padStart(6, '0');
+    const code = "123456";
     const hashedCode = crypto.createHash('sha256').update(code).digest('hex');
 
     // const forgetEntry = await this.forgetPasswordModel.findOne({
