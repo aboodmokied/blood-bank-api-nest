@@ -6,6 +6,7 @@ import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { validationExceptionFactory } from './common/pipes/validation.pipe';
+import { runSeeder } from './seed';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -32,6 +33,13 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new GlobalExceptionFilter());
   await app.listen(5000);
+
+  // Auto-seed database during startup (e.g. on deployment)
+  try {
+    await runSeeder(app);
+  } catch (error) {
+    console.error('Auto-seeding database failed/skipped:', error);
+  }
 }
 bootstrap();
 

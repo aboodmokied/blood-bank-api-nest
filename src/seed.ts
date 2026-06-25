@@ -7,16 +7,15 @@ import { RegisterUserDto } from './user/dto/create-user.dto';
 import { UnitStatus, BloodUnit } from './blood-unit/blood-unit.model';
 import { getModelToken } from '@nestjs/sequelize';
 
-async function bootstrap() {
-  const app = await NestFactory.createApplicationContext(AppModule);
+export async function runSeeder(app: any) {
   console.log('Seeding started...');
 
   const userService = app.get(UserService);
   const appointmentService = app.get(AppointmentService);
   const donationService = app.get(DonationService);
-  
+
   // Direct Model Access for updating statuses where services might restrict
-  const bloodUnitModel = app.get<typeof BloodUnit>(getModelToken(BloodUnit));
+  const bloodUnitModel = app.get(getModelToken(BloodUnit)) as typeof BloodUnit;
 
   // 1. Create Hospital
   console.log('Creating Hospital...');
@@ -35,11 +34,27 @@ async function bootstrap() {
   } catch (error) {
      console.log('Hospital likely exists...');
      // Try to find one? For now assume it was created previously or manually cleaned
-     // If we can't find it, we can't seed effectively. 
+     // If we can't find it, we can't seed effectively.
      // Let's assume ID 1 is the hospital if it fails, or search by email.
-     // UserService has no findByEmail. 
+     // UserService has no findByEmail.
      // We'll proceed hoping for the best or manual DB check.
      hospital = { id: 1, ...hospitalData };
+  }
+
+  // 1.5. Create Admin
+  console.log('Creating Admin...');
+  const adminData: RegisterUserDto = {
+    email: 'admin@test.com',
+    password: 'password123',
+    name: 'System Admin',
+    role: 'admin',
+  };
+
+  try {
+      const res = await userService.registerUser(adminData);
+      console.log(`Admin created: ${res.user.name}`);
+  } catch (e) {
+      console.log('Admin likely exists...');
   }
 
   // 2. Create Doctor
@@ -50,14 +65,13 @@ async function bootstrap() {
     name: 'Dr. Gregory House',
     role: 'doctor',
   };
-  
+
   try {
       const res = await userService.registerUser(doctorData);
       console.log(`Doctor created: ${res.user.name}`);
   } catch (e) {
       console.log('Doctor likely exists...');
   }
-
 
   // 3. Create Donors
   console.log('Creating Donors...');
@@ -82,7 +96,7 @@ async function bootstrap() {
     } catch (e) {
       console.log(`Donor ${i} likely exists...`);
       // Fake donor object for logic
-      donor = { id: i + 3, bloodType, name: donorData.name, email: donorData.email }; 
+      donor = { id: i + 3, bloodType, name: donorData.name, email: donorData.email };
     }
     donors.push(donor);
   }
@@ -90,17 +104,17 @@ async function bootstrap() {
   // 4. Create Transactions
   if (donors.length > 0 && hospital.id) {
       console.log('Seeding Transactions...');
-      
+
       // Loop through donors to create robust data
       for (const donor of donors) {
           // A. Create a Stored Donation (creates a Pending Blood Unit automatically)
           try {
              // Random Doctor ID assumption: 2
-             const doctorId = 2; 
+             const doctorId = 2;
 
              const pastDate = new Date();
              pastDate.setMonth(pastDate.getMonth() - Math.floor(Math.random() * 6));
-             
+
              // Create donation (Status: stored)
              // Note: DonationService.create expects CreateDonationDto
              await donationService.create({
@@ -112,7 +126,7 @@ async function bootstrap() {
                   donationDate: pastDate.toISOString(),
                   status: 'stored'
               });
-             
+
              // B. Create Pending Appointment
              await appointmentService.create({
                 hospitalId: hospital.id,
@@ -123,11 +137,11 @@ async function bootstrap() {
 
           } catch(e) { /* ignore dupes/errors */ }
       }
-      
+
       // 5. Seed Stock (Manipulate Units)
       console.log('Seeding extra stock (Creating donations and updating units)...');
       for (const type of bloodTypes) doctor_loop: {
-           // We need a donor of this type. 
+           // We need a donor of this type.
            const targetDonor = donors.find(d => d.bloodType === type);
            if (!targetDonor) break doctor_loop;
 
@@ -143,7 +157,7 @@ async function bootstrap() {
                       donationDate: new Date().toISOString(),
                       status: 'stored'
                    });
-                   
+
                    // Update the unit to PASSED
                    if (donation) {
                        await bloodUnitModel.update(
@@ -153,7 +167,7 @@ async function bootstrap() {
                    }
                } catch(e) {}
            }
-           
+
            // Create FAILED units (Discarded)
            for(let k=0; k<1; k++) {
                 try {
@@ -166,7 +180,7 @@ async function bootstrap() {
                        donationDate: new Date().toISOString(),
                        status: 'stored'
                     });
-                    
+
                     if (donation) {
                         await bloodUnitModel.update(
                             { status: UnitStatus.FAILED },
@@ -177,9 +191,21 @@ async function bootstrap() {
            }
       }
   }
-  
+
   console.log('Seeding complete! Log in with city@hospital.com / password123');
-  await app.close();
 }
 
-bootstrap();
+async function bootstrap() {
+  const app = await NestFactory.createApplicationContext(AppModule);
+  try {
+    await runSeeder(app);
+  } catch (error) {
+    console.error('Seeding failed:', error);
+  } finally {
+    await app.close();
+  }
+}
+
+if (process.argv[1] && (process.argv[1].endsWith('seed.ts') || process.argv[1].endsWith('seed.js') || process.argv[1].includes('seed'))) {
+  bootstrap();
+}
